@@ -302,9 +302,41 @@
 }
 
 .examples li {
+  display: flex;
+  align-items: center;
+  gap: var(--s3);
   break-inside: avoid;
   padding: var(--s2) 0;
   border-top: 1px solid var(--rule);
+}
+
+/* The library's pencil sketches: what each example draws. */
+.sketch {
+  flex: none;
+  width: 48px;
+  height: 38px;
+  fill: none;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.sketch .k {
+  stroke: var(--ink);
+}
+
+.sketch .b {
+  stroke: var(--blue);
+}
+
+.sketch .r {
+  stroke: var(--red);
+  stroke-width: 2;
+}
+
+.sketch .m {
+  stroke: var(--ink);
+  fill: var(--mark);
 }
 
 .examples a {

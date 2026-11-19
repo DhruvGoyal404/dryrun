@@ -6,7 +6,7 @@ import { heapLayout } from "../../detect/layout";
 import { cell, show } from "../../trace/format";
 import { isRef } from "../../trace/model";
 import type { Value } from "../../trace/types";
-import { changedIndices, items, justRan, type Scene, valueAt, ViewFrame } from "./common";
+import { changedIndices, items, justRan, overwritten, type Scene, valueAt, ViewFrame, Was } from "./common";
 
 const vars = (o: Record<string, number | string>) => o as CSSProperties;
 
@@ -41,6 +41,7 @@ function Cells({
           .join(" ");
         return (
           <li key={i} className={cls}>
+            <Was value={overwritten(scene.model, scene.step, id, i)} scene={scene} />
             <span className="cell-value">{cell(v, scene.model, scene.step)}</span>
             <span className="cell-index">{i}</span>
           </li>
@@ -131,6 +132,7 @@ export function GridView({ view, scene }: { view: View; scene: Scene }) {
                     const cls = wrote.has(k) || changed.has(c) ? "is-written" : read.has(k) ? "is-read" : "";
                     return (
                       <td key={c} className={cls}>
+                        <Was value={overwritten(scene.model, scene.step, row.id, c)} scene={scene} />
                         {cell(v, scene.model, scene.step)}
                       </td>
                     );
@@ -207,7 +209,15 @@ export function MapView({ view, scene }: { view: View; scene: Scene }) {
               return (
                 <tr key={key} className={cls}>
                   <th scope="row">{show(k, scene.model, scene.step, 0)}</th>
-                  <td>{text}</td>
+                  <td>
+                    {changed && prevText.get(key) !== undefined && (
+                      <s className="was-inline">
+                        <span className="sr-only">was </span>
+                        {prevText.get(key)}
+                      </s>
+                    )}
+                    {text}
+                  </td>
                 </tr>
               );
             })}

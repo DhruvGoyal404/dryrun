@@ -3,6 +3,7 @@
 import type { ReactNode } from "react";
 import type { View } from "../../detect/detect";
 import { isRef, type Model } from "../../trace/model";
+import { cell } from "../../trace/format";
 import type { HeapObj, Value } from "../../trace/types";
 
 export interface Scene {
@@ -55,6 +56,31 @@ export function changedIndices(model: Model, step: number, id: number | undefine
     if (JSON.stringify(v) !== JSON.stringify(old[i])) out.add(i);
   });
   return out;
+}
+
+/**
+ * The value a cell held before the line that just ran overwrote it, as on paper: the old
+ * value stays, crossed out. Null for a cell that was just created (an append) or unchanged.
+ */
+export function overwritten(model: Model, step: number, id: number | undefined, index: number): Value | null {
+  if (id === undefined || step === 0) return null;
+  const before = model.obj(id, step - 1);
+  const now = model.obj(id, step);
+  if (!before || !now || !("v" in before) || !("v" in now) || !Array.isArray(before.v) || !Array.isArray(now.v)) return null;
+  if (before.t === "dict" || now.t === "dict" || index >= before.v.length) return null;
+  const old = before.v[index] as Value;
+  return JSON.stringify(old) === JSON.stringify(now.v[index]) ? null : old;
+}
+
+/** The crossed-out old value, read out as "was 3" by screen readers. */
+export function Was({ value, scene }: { value: Value | null; scene: Scene }) {
+  if (value === null) return null;
+  return (
+    <s className="was">
+      <span className="sr-only">was </span>
+      {cell(value, scene.model, scene.step - 1)}
+    </s>
+  );
 }
 
 /** Reads, writes and operations on the structure so far: the per-structure counters. */

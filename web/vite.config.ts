@@ -10,6 +10,24 @@ const PYODIDE_BYTES = ["pyodide.asm.wasm", "python_stdlib.zip"].reduce((n, f) =>
 
 const escape = (s: string) => s.replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;");
 
+/**
+ * One small pencil sketch per structure, beside each library entry: what that example draws.
+ * Ink strokes, a blue pointer, a red "now" mark; decorative (the text says the same).
+ */
+const SKETCH: Record<string, string> = {
+  array: '<path class="k" d="M2 8h44v14H2zM13 8v14M24 8v14M35 8v14"/><path class="b" d="M18 33v-7M15 29l3-3 3 3"/>',
+  grid: '<path class="k" d="M6 4h36v30H6zM6 14h36M6 24h36M18 4v30M30 4v30"/><path class="m" d="M30 24h12v10H30z"/>',
+  recursion: '<path class="k" d="M24 9L12 21M24 9l12 12M12 21L6 31M12 21l6 10"/><rect class="r" x="18" y="3" width="12" height="7" rx="1.5"/><rect class="k" x="6" y="17" width="12" height="7" rx="1.5"/><rect class="k" x="30" y="17" width="12" height="7" rx="1.5"/>',
+  map: '<path class="k" d="M8 4h32v30H8zM8 14h32M8 24h32M20 4v30"/><path class="m" d="M20 14h20v10H20z"/>',
+  stack: '<path class="k" d="M14 4v30h20V4M14 14h20M14 24h20"/><path class="r" d="M10 29h4"/>',
+  queue: '<path class="k" d="M4 12h40v14H4zM16 12v14M28 12v14"/><path class="b" d="M2 6h6M44 32h-6"/>',
+  linked: '<path class="k" d="M2 12h10v12H2zM20 12h10v12H20zM38 12h8v12h-8zM12 18h7M30 18h7"/><path class="b" d="M7 5v6"/>',
+  tree: '<path class="k" d="M24 9L13 22M24 9l11 13"/><circle class="r" cx="24" cy="7" r="5"/><circle class="k" cx="12" cy="25" r="5"/><circle class="k" cx="36" cy="25" r="5"/>',
+  graph: '<path class="k" d="M9 10l14 16M9 10l28-2M23 26l14-18M23 26l18 2"/><circle class="k" cx="8" cy="10" r="4"/><circle class="m" cx="23" cy="27" r="4"/><circle class="k" cx="38" cy="8" r="4"/><circle class="b" cx="42" cy="29" r="4"/>',
+  heap: '<path class="k" d="M24 8L14 20M24 8l10 12M14 20l-6 10"/><circle class="k" cx="24" cy="7" r="4.5"/><circle class="k" cx="14" cy="21" r="4.5"/><circle class="k" cx="34" cy="21" r="4.5"/><circle class="k" cx="8" cy="31" r="4"/>',
+};
+const sketch = (kind: string) => `<svg class="sketch" viewBox="0 0 48 38" aria-hidden="true" focusable="false">${SKETCH[kind] ?? SKETCH.array}</svg>`;
+
 /** The pattern library as plain links in the landing page's HTML, so crawlers see it. */
 function libraryList(): Plugin {
   return {
@@ -22,7 +40,7 @@ function libraryList(): Plugin {
         .map((f) => {
           const src = readFileSync(`src/library/${f}`, "utf8");
           const meta = (k: string) => new RegExp(`^# ${k}: (.*)$`, "m").exec(src)?.[1]?.trim() ?? "";
-          return `<li><a href="/app#ex=${f.replace(/\.py$/, "")}">${escape(meta("title"))}</a><span>${escape(meta("pattern"))}</span></li>`;
+          return `<li>${sketch(meta("expect"))}<div><a href="/app#ex=${f.replace(/\.py$/, "")}">${escape(meta("title"))}</a><span>${escape(meta("pattern"))}</span></div></li>`;
         });
       return html.replace("<!--library-->", `<ul class="examples">\n${items.join("\n")}\n</ul>`);
     },

@@ -44,3 +44,15 @@ test("values print as Python would", () => {
   expect(show({ str: "abc", len: 900 }, null, 0)).toBe("'abc'… (900 chars)");
   expect(show({ r: 3 }, v, 0)).toBe("…");
 });
+
+test("an overwritten cell keeps its old value; a new or unchanged cell has none", async () => {
+  const { overwritten } = await import("../app/views/common");
+  const m = model([
+    { g: { a: { r: 1 } }, h: { 1: { t: "list", v: [1, 2] } } },
+    { h: { 1: { t: "list", v: [1, 9, 3] } } },
+  ]);
+  expect(overwritten(m, 1, 1, 1)).toBe(2);
+  expect(overwritten(m, 1, 1, 0)).toBeNull();
+  expect(overwritten(m, 1, 1, 2)).toBeNull();
+  expect(overwritten(m, 0, 1, 1)).toBeNull();
+});

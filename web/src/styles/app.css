@@ -411,6 +411,7 @@
 .array {
   position: relative;
   display: inline-block;
+  padding-top: 18px;
   padding-bottom: calc(var(--rows) * 44px + 8px);
 }
 
@@ -441,6 +442,30 @@
 
 .cell:last-child {
   border-radius: 0 var(--radius-cell) var(--radius-cell) 0;
+}
+
+/* An overwritten value, crossed out in pencil above the cell, as on paper. */
+.was {
+  position: absolute;
+  bottom: calc(100% + 1px);
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  font-family: var(--mono);
+  font-size: 12px;
+  line-height: 1.2;
+  color: var(--pencil);
+  text-align: center;
+  white-space: nowrap;
+  text-decoration-color: var(--red);
+  text-decoration-thickness: 1.5px;
+}
+
+.was-inline {
+  margin-right: var(--s2);
+  color: var(--pencil);
+  text-decoration-color: var(--red);
+  text-decoration-thickness: 1.5px;
 }
 
 .cell-value {
@@ -478,7 +503,7 @@
 .pointers {
   position: absolute;
   left: 0;
-  top: 58px;
+  top: 76px;
 }
 
 .pointer {
@@ -510,6 +535,14 @@
 }
 
 /* Tables */
+.grid td .was {
+  bottom: auto;
+  top: 1px;
+  left: auto;
+  right: 3px;
+  font-size: 11px;
+}
+
 .grid,
 .map,
 .keys,
@@ -534,6 +567,7 @@
 }
 
 .grid td {
+  position: relative;
   min-width: var(--cell);
   height: var(--cell);
   padding: 0 6px;
