@@ -69,6 +69,16 @@ jobs:
       - run: npm run build
       - name: End-to-end tests with axe, desktop and phone, under the production headers
         run: npx playwright test
+      - name: Review screenshots, desktop and phone, light and dark
+        if: success()
+        run: node scripts/shots.mjs
+      - name: Keep the screenshots
+        if: success()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: screenshots
+          path: .review
+          retention-days: 14
       - name: Keep the report when e2e fails
         if: failure()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
