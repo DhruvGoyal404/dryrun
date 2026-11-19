@@ -1,0 +1,34 @@
+# Secrets and local config. Never commit these.
+.env
+.env.*
+*.pem
+*.key
+
+# Node
+node_modules/
+dist/
+coverage/
+*.tsbuildinfo
+playwright-report/
+test-results/
+
+# Python
+__pycache__/
+.pytest_cache/
+*.pyc
+
+# Copied from node_modules/pyodide at build time (web/scripts/pyodide.mjs)
+/web/public/pyodide/
+
+# Editors and OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Tooling output
+.claude/
+graphify-out/
+
+# Local review screenshots (web/scripts/shots.mjs)
+/.review/
