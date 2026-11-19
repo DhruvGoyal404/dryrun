@@ -327,3 +327,9 @@ def test_every_library_example_runs_clean():
         r = t.run(source, stdin, call)
         assert "error" not in r, (path.name, r.get("error"))
         assert "capped" not in r, (path.name, r.get("capped"))
+
+
+def test_progress_reports_every_250_steps_with_the_line():
+    seen = []
+    t.run("for i in range(300):\n    pass\n", progress=lambda step, line: seen.append((step, line)))
+    assert [s for s, _ in seen] == [250, 500] and all(line in (1, 2) for _, line in seen)

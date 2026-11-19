@@ -41,6 +41,7 @@ DEFAULT_LIMITS = {
     "max_stdout": 100_000,  # characters of output kept
 }
 
+PROGRESS_EVERY = 250  # steps between progress reports, so a watchdog knows where a run got to
 CO_OPTIMIZED = 0x0001  # set on function code objects, not on module or class bodies
 STRUCT_METHODS = frozenset(
     "append pop popleft appendleft extend insert remove add discard get setdefault update clear sort reverse".split()
@@ -145,7 +146,8 @@ def analyse(tree):
 
 
 class Tracer:
-    def __init__(self, limits=None, record=True):
+    def __init__(self, limits=None, record=True, progress=None):
+        self.progress = progress  # called as progress(steps, line) every PROGRESS_EVERY steps
         self.limits = dict(DEFAULT_LIMITS)
         self.limits.update(limits or {})
         self.record = record
@@ -477,6 +479,8 @@ class Tracer:
         if time.monotonic() - self.started > self.limits["max_seconds"]:
             self.cap("time", line)
         self.step_count += 1
+        if self.progress is not None and self.step_count % PROGRESS_EVERY == 0:
+            self.progress(self.step_count, line)
         if event == "l":
             self.line_hits[line] = self.line_hits.get(line, 0) + 1
         if not self.record:
@@ -632,11 +636,11 @@ class Tracer:
         return {"type": type(e).__name__, "msg": msg[: self.limits["max_str"] * 5], "line": line, "tb": "\n".join(tb)}
 
 
-def run(code, stdin="", call=None, limits=None, record=True):
+def run(code, stdin="", call=None, limits=None, record=True, progress=None):
     """Traces `code` and returns the result as a dict."""
-    return Tracer(limits, record).run(code, stdin, call or None)
+    return Tracer(limits, record, progress).run(code, stdin, call or None)
 
 
-def run_json(code, stdin="", call=None, limits_json="{}", record=True):
+def run_json(code, stdin="", call=None, limits_json="{}", record=True, progress=None):
     """The browser's entry point: JSON in, JSON out."""
-    return json.dumps(run(code, stdin, call, json.loads(limits_json), record), separators=(",", ":"))
+    return json.dumps(run(code, stdin, call, json.loads(limits_json), record, progress), separators=(",", ":"))
