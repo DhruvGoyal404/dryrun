@@ -6,16 +6,27 @@ import { Icon } from "./Icon";
 
 function Dialog({ open, onClose, title, children, id }: { open: boolean; onClose: () => void; title: string; children: ReactNode; id: string }) {
   const ref = useRef<HTMLDialogElement>(null);
+  const closed = useRef(onClose);
+  useEffect(() => {
+    closed.current = onClose;
+  });
+  // The native close event (Escape, the close button, a backdrop click), listened to directly.
+  useEffect(() => {
+    const d = ref.current!;
+    const handler = () => closed.current();
+    d.addEventListener("close", handler);
+    return () => d.removeEventListener("close", handler);
+  }, []);
   useEffect(() => {
     const d = ref.current!;
     if (open && !d.open) d.showModal();
     if (!open && d.open) d.close();
   }, [open]);
   return (
-    <dialog ref={ref} className="dialog" aria-labelledby={`${id}-title`} onClose={onClose} onClick={(e) => e.target === ref.current && onClose()}>
+    <dialog ref={ref} className="dialog" aria-labelledby={`${id}-title`} onClick={(e) => e.target === ref.current && ref.current.close()}>
       <div className="dialog-head">
         <h2 id={`${id}-title`}>{title}</h2>
-        <button className="icon-btn" type="button" onClick={onClose} aria-label="Close">
+        <button className="icon-btn" type="button" onClick={() => ref.current?.close()} aria-label="Close">
           <Icon name="close" />
         </button>
       </div>

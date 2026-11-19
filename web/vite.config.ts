@@ -53,7 +53,8 @@ function serviceWorker(): Plugin {
       const built = Object.keys(bundle).filter((f) => !f.endsWith(".map") && !f.endsWith(".html"));
       // Only the Latin and Latin-extended font files: other subsets download only if used.
       const assets = built.filter((f) => !f.endsWith(".woff2") || /-latin-(ext-)?wght/.test(f));
-      const pages = ["/", "/app", "/404.html"];
+      // Not /404.html: it is served with status 404, and one failed response fails the install.
+      const pages = ["/", "/app"];
       const fromPublic = ["/favicon.svg", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png", "/theme.js"];
       const files = [...pages, ...fromPublic, ...assets.map((f) => `/${f}`)].sort();
       const version = createHash("sha256").update(files.join("\n") + pyodide.version).digest("hex").slice(0, 12);

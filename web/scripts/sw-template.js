@@ -44,7 +44,7 @@ self.addEventListener("fetch", (event) => {
   if (request.mode === "navigate") {
     const page = url.pathname === "/app" || url.pathname === "/app.html" ? "/app" : url.pathname === "/" ? "/" : null;
     event.respondWith(
-      fetch(request).catch(async () => (page && (await caches.match(page, { cacheName: CACHE }))) || caches.match("/404.html", { cacheName: CACHE })),
+      fetch(request).catch(async () => (await caches.match(page ?? "/", { cacheName: CACHE })) ?? Response.error()),
     );
     return;
   }

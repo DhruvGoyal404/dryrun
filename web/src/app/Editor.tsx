@@ -146,7 +146,7 @@ export function Editor({ value, onChange, label, current, error, hits, onRunToLi
           syntaxHighlighting(highlight),
           marksField,
           lineDecorations,
-          labelling.current.of(EditorView.contentAttributes.of({ "aria-label": label })),
+          labelling.current.of(EditorView.contentAttributes.of({ "aria-label": label, tabindex: "0" })),
           keymap.of([
             { key: "Mod-Enter", run: () => (callbacks.current.onRun(), true) },
             ...defaultKeymap,
@@ -171,7 +171,7 @@ export function Editor({ value, onChange, label, current, error, hits, onRunToLi
   }, [value]);
 
   useEffect(() => {
-    view.current?.dispatch({ effects: labelling.current.reconfigure(EditorView.contentAttributes.of({ "aria-label": label })) });
+    view.current?.dispatch({ effects: labelling.current.reconfigure(EditorView.contentAttributes.of({ "aria-label": label, tabindex: "0" })) });
   }, [label]);
 
   useEffect(() => {

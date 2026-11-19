@@ -84,19 +84,19 @@
 }
 
 .cm-editor .cm-heat-1 {
-  background: color-mix(in srgb, var(--amber) 14%, transparent);
+  background: color-mix(in srgb, var(--amber) 10%, transparent);
 }
 
 .cm-editor .cm-heat-2 {
-  background: color-mix(in srgb, var(--amber) 26%, transparent);
+  background: color-mix(in srgb, var(--amber) 18%, transparent);
 }
 
 .cm-editor .cm-heat-3 {
-  background: color-mix(in srgb, var(--amber) 40%, transparent);
+  background: color-mix(in srgb, var(--amber) 26%, transparent);
 }
 
 .cm-editor .cm-heat-4 {
-  background: color-mix(in srgb, var(--amber) 56%, transparent);
+  background: color-mix(in srgb, var(--amber) 34%, transparent);
 }
 
 .cm-editor .tok-kw {
