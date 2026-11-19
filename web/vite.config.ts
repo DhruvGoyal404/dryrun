@@ -1,7 +1,8 @@
 /// <reference types="vitest/config" />
 import react from "@vitejs/plugin-react";
 import { createHash } from "node:crypto";
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { join } from "node:path";
 import { defineConfig, type Plugin } from "vite";
 
 const pyodide = JSON.parse(readFileSync("node_modules/pyodide/package.json", "utf8")) as { version: string };
@@ -42,27 +43,31 @@ function preloadFont(): Plugin {
 }
 
 /**
- * Emits sw.js: the built site precached at install (small: HTML, JS, CSS, fonts), and
- * Python cached the first time it loads, so later visits are instant and work offline.
+ * Writes sw.js after the build: the site precached at install (HTML, JS, CSS, Latin fonts:
+ * small), and Python cached the first time it loads, so later visits are instant and work
+ * offline. The list comes from the files actually written: a chunk the bundler reports but
+ * never writes (an empty entry) would 404 and fail the whole install.
  */
 function serviceWorker(): Plugin {
   return {
     name: "dryrun-service-worker",
     apply: "build",
-    generateBundle(_, bundle) {
-      const built = Object.keys(bundle).filter((f) => !f.endsWith(".map") && !f.endsWith(".html"));
+    writeBundle(options) {
+      const dir = options.dir ?? "dist";
       // Only the Latin and Latin-extended font files: other subsets download only if used.
-      const assets = built.filter((f) => !f.endsWith(".woff2") || /-latin-(ext-)?wght/.test(f));
+      const assets = readdirSync(join(dir, "assets"))
+        .filter((f) => !f.endsWith(".map") && (!f.endsWith(".woff2") || /-latin-(ext-)?wght/.test(f)))
+        .map((f) => `/assets/${f}`);
       // Not /404.html: it is served with status 404, and one failed response fails the install.
       const pages = ["/", "/app"];
-      const fromPublic = ["/favicon.svg", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png", "/theme.js"];
-      const files = [...pages, ...fromPublic, ...assets.map((f) => `/${f}`)].sort();
+      const fromPublic = ["/favicon.svg", "/manifest.webmanifest", "/icon-192.png", "/icon-512.png", "/theme.js"].filter((f) => existsSync(join(dir, f)));
+      const files = [...pages, ...fromPublic, ...assets].sort();
       const version = createHash("sha256").update(files.join("\n") + pyodide.version).digest("hex").slice(0, 12);
       const source = readFileSync("scripts/sw-template.js", "utf8")
         .replace("__VERSION__", version)
         .replace("__PYODIDE__", `/pyodide/${pyodide.version}/`)
         .replace("__PRECACHE__", JSON.stringify(files, null, 2));
-      this.emitFile({ type: "asset", fileName: "sw.js", source });
+      writeFileSync(join(dir, "sw.js"), source);
     },
   };
 }
