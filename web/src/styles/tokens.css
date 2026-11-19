@@ -1,0 +1,92 @@
+/* Hallmark: custom direction "a dry run on paper" (brief-pinned: notebook, graph paper, ink and pencil, clean dark mode) | signature: the program's own structures drawn as on paper | DESIGN.md is the contract */
+/* critique: paper ground + ink/pencil/pen roles carry meaning, never decoration; handwriting only where a person would annotate */
+
+/* Every colour and face in DESIGN.md, nowhere else. scripts/contrast.mjs checks the pairs. */
+@font-face {
+  /* Metric-matched fallback so the swap to IBM Plex Sans doesn't shift layout. */
+  font-family: "Plex Fallback";
+  src: local("Arial");
+  size-adjust: 100%;
+  ascent-override: 102.5%;
+  descent-override: 27.5%;
+}
+
+:root {
+  color-scheme: light;
+  --paper: #f6f3ea;
+  --sheet: #fcfaf4;
+  --grid: #e4e6e3;
+  --rule: #ddd8cb;
+  --edge: #857f72;
+  --ink: #1c2433;
+  --pencil: #575e6c;
+  --blue: #1f4fc4;
+  --red: #b42318;
+  --green: #1d7543;
+  --amber: #8a5300;
+  --mark: #fbe7a1;
+  --read: #dde7fb;
+  --focus: #b4480e;
+  --on-ink: #fcfaf4;
+  --shadow: 0 6px 24px rgb(28 36 51 / 0.14);
+
+  --sans: "IBM Plex Sans Variable", "Plex Fallback", system-ui, sans-serif;
+  --mono: "JetBrains Mono Variable", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  --hand: "Caveat Variable", "Segoe Print", cursive;
+
+  --s1: 4px;
+  --s2: 8px;
+  --s3: 12px;
+  --s4: 16px;
+  --s5: 24px;
+  --s6: 32px;
+  --s7: 48px;
+  --s8: 64px;
+  --s9: 96px;
+  --radius: 6px;
+  --radius-cell: 4px;
+  --cell: 40px;
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #14171c;
+    --sheet: #1b1f26;
+    --grid: #20252d;
+    --rule: #2c323c;
+    --edge: #7a8290;
+    --ink: #ebe7dc;
+    --pencil: #a9afba;
+    --blue: #8db0ff;
+    --red: #ff8f80;
+    --green: #74d69f;
+    --amber: #f0c35a;
+    --mark: #4b3f12;
+    --read: #1e3254;
+    --focus: #ffb37a;
+    --on-ink: #14171c;
+    --shadow: 0 6px 24px rgb(0 0 0 / 0.45);
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #14171c;
+  --sheet: #1b1f26;
+  --grid: #20252d;
+  --rule: #2c323c;
+  --edge: #7a8290;
+  --ink: #ebe7dc;
+  --pencil: #a9afba;
+  --blue: #8db0ff;
+  --red: #ff8f80;
+  --green: #74d69f;
+  --amber: #f0c35a;
+  --mark: #4b3f12;
+  --read: #1e3254;
+  --focus: #ffb37a;
+  --on-ink: #14171c;
+  --shadow: 0 6px 24px rgb(0 0 0 / 0.45);
+}

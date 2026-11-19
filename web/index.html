@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DryRun: a visual dry run of your Python code</title>
+    <meta
+      name="description"
+      content="Paste a Python solution and an input. DryRun runs it step by step in your browser and draws arrays with pointers, recursion trees, DP tables, linked lists, trees and graphs as you would on paper."
+    />
+    <meta name="theme-color" content="#14171c" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f6f3ea" media="(prefers-color-scheme: light)" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="canonical" href="https://dryrun.dhruvgoyal.tech/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="DryRun" />
+    <meta property="og:url" content="https://dryrun.dhruvgoyal.tech/" />
+    <meta property="og:title" content="DryRun: a visual dry run of your Python code" />
+    <meta
+      property="og:description"
+      content="Your own Python, run step by step in the browser, with every array, recursion tree, DP table, list, tree and graph drawn as on paper."
+    />
+    <meta property="og:image" content="https://dryrun.dhruvgoyal.tech/og.png" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="DryRun: an array of seven numbers with the pointers left and right under it, beside the Python line that reads them." />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="DryRun: a visual dry run of your Python code" />
+    <meta name="twitter:description" content="Your own Python, step by step in the browser, drawn as on paper." />
+    <meta name="twitter:image" content="https://dryrun.dhruvgoyal.tech/og.png" />
+    <script src="/theme.js"></script>
+  </head>
+  <body class="landing">
+    <a class="skip" href="#main">Skip to content</a>
+    <header class="site-head">
+      <div class="container site-head-row">
+        <a class="wordmark" href="/" aria-label="DryRun home">Dry<span>Run</span></a>
+        <nav aria-label="Site">
+          <a href="#library">Library</a>
+          <a href="https://github.com/DhruvGoyal404/dryrun">Source</a>
+          <a class="btn btn-primary" href="/app">Open the app</a>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="hero" aria-labelledby="hero-title">
+        <div class="container hero-grid">
+          <div class="hero-text">
+            <h1 id="hero-title">Your code's dry run, drawn on paper</h1>
+            <p class="lede">Paste a Python solution and an input. Watch every step drawn.</p>
+            <p class="hero-actions">
+              <a class="btn btn-primary btn-lg" href="/app#ex=01-two-pointers">Try a two-pointer example</a>
+              <a class="btn btn-lg" href="/app">Start with your own code</a>
+            </p>
+          </div>
+
+          <figure class="sheet hero-sheet">
+            <div class="sheet-code" aria-hidden="true">
+              <code><span class="ln">8</span>    left, right = 0, len(nums) - 1</code>
+              <code><span class="ln">9</span>    while left &lt; right:</code>
+              <code><span class="ln">10</span>        total = nums[left] + nums[right]</code>
+              <code class="now"><span class="ln">11</span>        if total == target:</code>
+              <code><span class="ln">12</span>            return (left, right)</code>
+            </div>
+            <div class="paper">
+              <p class="paper-name"><span class="hand">nums</span> array, 2 pointers</p>
+              <svg class="hero-array" viewBox="0 0 330 118" role="img" aria-labelledby="hero-array-title">
+                <title id="hero-array-title">The array 1, 3, 4, 6, 8, 11, 15 with left at index 1 and right at index 5; the window between them is shaded and the two cells just read are marked.</title>
+                <g class="cells-svg">
+                  <rect class="win" x="44" y="8" width="200" height="40" />
+                  <rect class="rd" x="44" y="8" width="40" height="40" />
+                  <rect class="rd" x="204" y="8" width="40" height="40" />
+                  <path class="box" d="M4 8h280v40H4zM44 8v40M84 8v40M124 8v40M164 8v40M204 8v40M244 8v40" />
+                  <text x="24" y="33">1</text>
+                  <text x="64" y="33">3</text>
+                  <text x="104" y="33">4</text>
+                  <text x="144" y="33">6</text>
+                  <text x="184" y="33">8</text>
+                  <text x="224" y="33">11</text>
+                  <text x="264" y="33">15</text>
+                  <text class="idx" x="24" y="62">0</text>
+                  <text class="idx" x="64" y="62">1</text>
+                  <text class="idx" x="104" y="62">2</text>
+                  <text class="idx" x="144" y="62">3</text>
+                  <text class="idx" x="184" y="62">4</text>
+                  <text class="idx" x="224" y="62">5</text>
+                  <text class="idx" x="264" y="62">6</text>
+                </g>
+                <g class="ptr">
+                  <path d="M64 92V72M59 77l5-5 5 5" />
+                  <text x="64" y="110">left</text>
+                  <path d="M224 92V72M219 77l5-5 5 5" />
+                  <text x="224" y="110">right</text>
+                </g>
+              </svg>
+              <dl class="paper-vars">
+                <div><dt>total</dt><dd>14</dd></div>
+                <div><dt>target</dt><dd>14</dd></div>
+              </dl>
+            </div>
+            <figcaption>Step 18 of the two-pointer example, about to run line 11: the pair is found.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="draws-title">
+        <div class="container">
+          <h2 id="draws-title">It draws what your code does</h2>
+          <p class="section-lede">No special API and no annotations. DryRun watches what each variable is used for and draws it that way.</p>
+          <table class="draws">
+            <thead>
+              <tr>
+                <th scope="col">When your code…</th>
+                <th scope="col">you see</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>indexes a list with moving integers, <code>nums[left]</code></td><td>the array, with each index variable as an arrow under its cell and the window between two pointers shaded</td></tr>
+              <tr><td>calls a function from inside itself</td><td>the recursion tree, the current path in red, memo hits marked apart from real calls, big subtrees folded</td></tr>
+              <tr><td>fills <code>dp[i][j]</code> from other cells</td><td>the table filling in, the cell just written highlighted and the cells it read marked</td></tr>
+              <tr><td>follows <code>node.next</code></td><td>boxes and arrows, with <code>slow</code>, <code>fast</code>, <code>prev</code> and <code>curr</code> written on their nodes</td></tr>
+              <tr><td>walks <code>node.left</code> and <code>node.right</code></td><td>the tree, numbered in the order your code visits it</td></tr>
+              <tr><td>keeps neighbours in a dict or list</td><td>the graph, with the visited set shaded and the queue's nodes outlined</td></tr>
+              <tr><td>uses <code>heapq</code>, <code>append</code> and <code>pop</code>, or <code>popleft</code></td><td>a heap as a tree and an array, a stack standing up, a queue lying down</td></tr>
+            </tbody>
+          </table>
+          <p class="note">Every highlight is an event the tracer recorded. A comment like <code># dryrun: grid dp</code> overrides the guess.</p>
+        </div>
+      </section>
+
+      <section class="band" aria-labelledby="how-title">
+        <div class="container how">
+          <h2 id="how-title">How it works</h2>
+          <div class="how-cols">
+            <div>
+              <h3>Python in your browser</h3>
+              <p>Your code runs in Pyodide, CPython compiled to WebAssembly, inside a Web Worker, so the page never freezes. Nothing is sent to a server; there isn't one.</p>
+            </div>
+            <div>
+              <h3>A tracer that records, not guesses</h3>
+              <p><code>sys.settrace</code> records every line, call and return, with the variables that changed. Two names for one list stay one list.</p>
+            </div>
+            <div>
+              <h3>Limits, said out loud</h3>
+              <p>5,000 steps, 200 nested calls and a few seconds per run. When a run hits a limit, DryRun says which one, and at which line.</p>
+            </div>
+          </div>
+          <p class="hero-actions"><a class="btn btn-primary btn-lg" href="/app">Open the app</a></p>
+        </div>
+      </section>
+
+      <section class="band" id="library" aria-labelledby="library-title">
+        <div class="container">
+          <h2 id="library-title">Pattern library</h2>
+          <p class="section-lede">Twenty short programs, one per pattern, written for DryRun. Each opens with its input and runs.</p>
+          <!--library-->
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-foot">
+      <div class="container site-foot-row">
+        <p>DryRun runs entirely in your browser: no server, no accounts, no tracking.</p>
+        <p><a href="https://github.com/DhruvGoyal404/dryrun">Source on GitHub</a>, MIT licence. By Dhruv Goyal.</p>
+      </div>
+    </footer>
+    <script type="module" src="/src/entries/landing.ts"></script>
+  </body>
+</html>

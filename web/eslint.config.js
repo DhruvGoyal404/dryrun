@@ -21,7 +21,7 @@ export default tseslint.config(
   {
     // The service worker template; vite.config.ts fills in the placeholders at build time.
     files: ["scripts/sw-template.js"],
-    languageOptions: { globals: { ...globals.serviceworker, __PRECACHE__: "readonly" } },
+    languageOptions: { globals: { ...globals.serviceworker, __PRECACHE__: "readonly", __PYODIDE__: "readonly" } },
   },
   {
     // Playwright: fixtures call `use`, which isn't React's; page.evaluate bodies run in the browser.

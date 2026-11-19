@@ -32,3 +32,6 @@ graphify-out/
 
 # Local review screenshots (web/scripts/shots.mjs)
 /.review/
+
+# Rendered by web/scripts/assets.mjs on CI
+/web/public/*.png
