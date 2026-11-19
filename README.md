@@ -36,6 +36,12 @@ accounts, no tracking).
 |---|---|---|---|
 | ![Array with left and right pointers](docs/screenshots/two-pointers.png) | ![Grid paths table filling in](docs/screenshots/grid-paths.png) | ![Reversing a linked list](docs/screenshots/reverse-list.png) | ![BFS with visited and queue](docs/screenshots/bfs-graph.png) |
 
+| LCS, dark (offset pointers i-1, j-1) | Dijkstra, dark (weighted graph + heap) | Tree walk with visit order | Phone |
+|---|---|---|---|
+| ![LCS table with i-1 and j-1 under the strings](docs/screenshots/lcs-dark.png) | ![Dijkstra with the heap of (cost, town) pairs](docs/screenshots/dijkstra-dark.png) | ![Binary tree numbered in visit order beside the insert recursion](docs/screenshots/tree-traversal.png) | ![The monotonic stack example on a phone in dark mode](docs/screenshots/phone-run-dark.png) |
+
+Screenshots are captured by `web/scripts/shots.mjs` on CI from the production build.
+
 ## How the tracer works
 
 [`tracer/dryrun_tracer.py`](tracer/dryrun_tracer.py) is one standard-library file that runs
