@@ -78,6 +78,7 @@ jobs:
         with:
           name: screenshots
           path: .review
+          include-hidden-files: true
           retention-days: 14
       - name: Keep the report when e2e fails
         if: failure()
