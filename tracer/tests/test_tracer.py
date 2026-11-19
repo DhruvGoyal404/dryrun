@@ -234,6 +234,25 @@ def test_dp_grid_reads_and_writes_resolve_rows():
     assert step["wr"] == [[row(1), 1]]
 
 
+def test_attribute_reads_and_writes_on_instances():
+    code = (
+        "class N:\n"
+        "    def __init__(self, v):\n"
+        "        self.val = v\n"
+        "        self.next = None\n"
+        "a, b = N(1), N(2)\n"
+        "a.next = b\n"
+        "x = a.next.val\n"
+        "s = 'abc'.upper()\n"
+    )
+    r = t.run(code)
+    steps = {s["ln"]: s for s in r["steps"] if s["e"] == "l" and s["c"] == 0}
+    g = globals_at(r, len(r["steps"]) - 1)
+    assert steps[6]["aw"] == [[g["a"]["r"], "next"]]
+    assert steps[7]["ar"] == [[g["b"]["r"], "val"], [g["a"]["r"], "next"]]
+    assert "ar" not in steps[8]  # a method call on a str is not an attribute read
+
+
 def test_struct_operations_are_counted_by_object():
     code = (
         "import heapq\n"

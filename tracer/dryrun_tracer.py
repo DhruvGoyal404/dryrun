@@ -98,16 +98,17 @@ def _index_name(node):
 
 
 def analyse(tree):
-    """Maps line -> {"subs": [(node, kind)], "ops": [(target, method)], "ins": [expr]}."""
+    """Maps line -> {"subs": [(node, kind)], "attrs": [(node, kind)], "ops": [(target, method)], "ins": [expr]}."""
     lines = {}
     for stmt in ast.walk(tree):
         if not isinstance(stmt, ast.stmt):
             continue
-        info = lines.setdefault(stmt.lineno, {"subs": [], "ops": [], "ins": []})
+        info = lines.setdefault(stmt.lineno, {"subs": [], "attrs": [], "ops": [], "ins": []})
         aug_target = stmt.target if isinstance(stmt, ast.AugAssign) else None
         for header in _header_nodes(stmt):
             # In dp[i][j], dp[i] only fetches a row: the access is (row, j), recorded once.
             row_fetches = {id(n.value) for n in ast.walk(header) if isinstance(n, ast.Subscript)}
+            methods = {id(n.func) for n in ast.walk(header) if isinstance(n, ast.Call)}
             for node in ast.walk(header):
                 if isinstance(node, ast.Subscript) and id(node) not in row_fetches and not isinstance(node.slice, ast.Slice):
                     if node is aug_target:
@@ -116,7 +117,12 @@ def analyse(tree):
                         info["subs"].append((node, "r"))
                     else:
                         info["subs"].append((node, "w"))
-                elif isinstance(node, ast.Call):
+                elif isinstance(node, ast.Attribute) and id(node) not in methods:
+                    if node is aug_target:
+                        info["attrs"].append((node, "rw"))
+                    else:
+                        info["attrs"].append((node, "r" if isinstance(node.ctx, ast.Load) else "w"))
+                if isinstance(node, ast.Call):
                     func = node.func
                     if isinstance(func, ast.Attribute):
                         if isinstance(func.value, ast.Name) and func.value.id == "heapq" and func.attr in HEAPQ_FUNCS:
@@ -418,6 +424,23 @@ class Tracer:
                     reads.append(entry)
                 if "w" in kind:
                     writes.append(entry)
+        attr_reads, attr_writes = [], []
+        for node, kind in info["attrs"]:
+            try:
+                base = self.value_of(node.value, frame)
+                d = object.__getattribute__(base, "__dict__")
+            except Exception:  # noqa: BLE001 - not an instance with a __dict__
+                continue
+            if isinstance(d, dict) and not isinstance(base, (type, types.ModuleType, types.FunctionType)):
+                entry = [self.ref(base), node.attr]
+                if "r" in kind:
+                    attr_reads.append(entry)
+                if "w" in kind:
+                    attr_writes.append(entry)
+        if attr_reads:
+            step["ar"] = attr_reads
+        if attr_writes:
+            step["aw"] = attr_writes
         for target, method in info["ops"]:
             try:
                 obj = self.value_of(target, frame)
