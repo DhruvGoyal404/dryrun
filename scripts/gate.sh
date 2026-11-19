@@ -7,6 +7,7 @@ cd "$(dirname "$0")/.."
 python -m pytest tracer -q
 node --test scripts/*.test.mjs
 node scripts/check-workflows.mjs
+node scripts/contrast.mjs
 if [ -d web/node_modules ]; then
   (cd web && npm run typecheck && npm run lint && npm test)
 fi
