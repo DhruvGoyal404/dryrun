@@ -94,6 +94,32 @@ jobs:
           path: web/dist
           retention-days: 3
 
+  lighthouse-build:
+    name: Lighthouse on the tested build (report)
+    needs: web
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+          cache-dependency-path: deploy/package-lock.json
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: web/dist
+      - name: Install the pinned Lighthouse
+        working-directory: deploy
+        run: npm ci
+      - name: Landing page and app, served with the production headers (median of three runs per preset)
+        run: |
+          node web/scripts/serve.mjs 4173 &
+          sleep 1
+          cd deploy
+          node lighthouse.mjs http://localhost:4173/
+          node lighthouse.mjs http://localhost:4173/app
+
   deploy:
     name: Deploy to Cloudflare Pages
     if: github.ref == 'refs/heads/main'
