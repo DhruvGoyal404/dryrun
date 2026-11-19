@@ -98,15 +98,16 @@ Docs: [README.md](README.md) (for interviewers), [docs/DECISIONS.md](docs/DECISI
 
 ## Deployment
 
-Static files on Cloudflare Pages (free tier), project `dryrun`, custom domain
-dryrun.dhruvgoyal.tech (fallback dryrun.pages.dev). Nothing bills while idle, so there are
-no up/down scripts; the README says so. Cloudflare Web Analytics is off for the zone; the
-live-site job fails if an injected analytics script appears.
+Live at https://dryrun.dhruvgoyal.tech (fallback https://dryrun-4io.pages.dev: Cloudflare
+gave the project that subdomain because `dryrun.pages.dev` was taken). Static files on
+Cloudflare Pages (free tier), project `dryrun`, DNS on Cloudflare. Nothing bills while idle,
+so there are no up/down scripts; the README says so. Cloudflare Web Analytics is off for the
+zone; the live-site job fails if an injected analytics script appears.
 
-- CI's deploy job ships the exact `web/dist` the e2e suite tested (an artifact), with
-  wrangler pinned in `deploy/`, after every other job passes on `main`. It needs the repo
-  secrets `CLOUDFLARE_API_TOKEN` (Account / Cloudflare Pages / Edit, one account) and
-  `CLOUDFLARE_ACCOUNT_ID`; without them it skips.
+- CI deploys every push to `main` once all its other jobs are green: the deploy job ships
+  the exact `web/dist` the e2e suite tested (an artifact), with wrangler pinned in
+  `deploy/`. It uses the repo secrets `CLOUDFLARE_API_TOKEN` (Account / Cloudflare Pages /
+  Edit, one account) and `CLOUDFLARE_ACCOUNT_ID`; without them it skips.
 - After a deploy, the live-site job checks headers and injected scripts, runs a subset of
   the e2e suite against the live URL, and runs Lighthouse (`deploy/lighthouse.mjs`, median
   of three per preset). Targets: SEO, Accessibility, Best Practices 100; Performance >= 95

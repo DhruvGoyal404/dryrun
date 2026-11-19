@@ -2,6 +2,20 @@
 
 A short running log: what's done, numbers, what failed, what's next. Newest first.
 
+## 2026-11-20: live
+
+- Live at https://dryrun.dhruvgoyal.tech, fallback https://dryrun-4io.pages.dev (Cloudflare's
+  subdomain for the project; `dryrun.pages.dev` was taken, so the docs now name the real
+  one). CI deploys every push to `main` once every other job is green; nothing bills while
+  idle, so no up/down scripts.
+- Live-site job green: CSP and security headers served, no injected analytics script,
+  live e2e subset 12/12, Lighthouse on the live landing page 100/100/100/100 on mobile
+  (LCP 0.9 s) and desktop (LCP 0.2 s), TBT 0 ms. The owner's own test passed on desktop
+  and phone.
+- The two open review items are done: an overwritten value stays visible, crossed out in
+  pencil, in arrays, tables and hash maps; each library entry on the landing page has a
+  small sketch of the structure it draws.
+
 ## 2026-11-19 (evening)
 
 - e2e green on CI: 62 passed, 1 skipped (the keyboard-only test is desktop only), across

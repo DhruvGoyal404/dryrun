@@ -8,8 +8,8 @@ runs it step by step in your browser and draws the data structures the way you w
 paper: arrays with moving pointers, the recursion tree, the DP table filling in, linked
 lists, trees, graphs and heaps. Step forward and back, jump between calls, run to a line.
 
-**Live:** https://dryrun.dhruvgoyal.tech (works offline once loaded; no server, no
-accounts, no tracking).
+**Live:** https://dryrun.dhruvgoyal.tech (fallback https://dryrun-4io.pages.dev; works
+offline once loaded; no server, no accounts, no tracking).
 
 ![DryRun on the memoized climbing-stairs example: the recursion tree with memo hits marked, beside the code](docs/screenshots/memo-recursion.png)
 
@@ -80,7 +80,7 @@ and name) across the whole trace, once, so a drawing never changes kind mid-run:
 
 | Your code… | DryRun draws |
 |---|---|
-| indexes a list or string with an int variable (`nums[left]`) | an array with that variable as an arrow; `left`/`right`, `lo`/`hi`, `l`/`r`, `start`/`end` shade the window between them |
+| indexes a list or string with an int variable (`nums[left]`) | an array with that variable as an arrow; `left`/`right`, `lo`/`hi`, `l`/`r`, `start`/`end` shade the window between them; an overwritten value stays, crossed out in pencil, as on paper |
 | calls a function from inside itself (directly or mutually) | the recursion tree: current path in red, returned calls with their values, **memo hits** (a leaf that reads a dict its own function writes) marked apart from base cases; subtrees over 20 calls fold when the tree is big |
 | keeps a rectangular list of number lists | a table; the cell the last line wrote is highlighted, the cells it read are marked |
 | keeps a dict of lists that name its own keys, or a ragged list of index lists | a graph laid out by BFS layers, with the visited set shaded and the queue's nodes outlined |
@@ -146,8 +146,8 @@ even if that part didn't run.
 ## Running it
 
 Static site, no backend, nothing to pay for while idle, so there are **no up/down
-scripts**: Cloudflare Pages serves the files and every run happens in the visitor's
-browser.
+scripts**: Cloudflare Pages (free tier) serves the files and every run happens in the
+visitor's browser. CI deploys every push to `main` once all its other jobs are green.
 
 ```bash
 cd web
@@ -167,7 +167,9 @@ cd .. && python -m pytest tracer
   and the whole library inside Pyodide, then Playwright e2e on desktop and a 390 px phone
   (every visualizer, caps, errors, compare, share links, offline reload, keyboard-only use,
   axe in both themes, and any console error fails a test). The deploy ships the exact build
-  the e2e suite tested; a live-site job then checks for injected scripts and runs Lighthouse.
+  the e2e suite tested; a live-site job then checks for injected scripts, runs part of the
+  e2e suite against the live site, and runs Lighthouse: 100 for Performance,
+  Accessibility, Best Practices and SEO on the landing page, mobile and desktop.
 - **Strict CSP** ([_headers](web/public/_headers)): `script-src 'self' 'wasm-unsafe-eval'`
   (what Pyodide needs to compile WebAssembly), `style-src 'self'`, `connect-src 'self'`,
   `worker-src 'self'`, no inline anything, plus COOP/COEP/CORP, HSTS, nosniff. The e2e suite
