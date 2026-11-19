@@ -170,7 +170,7 @@ function usage(model: Model): Usage {
   for (const step of model.steps) {
     for (const [id, method] of step.ops ?? []) add(ops, id, method);
     for (const [id, base, index] of step.px ?? []) {
-      indexVars.add(index);
+      indexVars.add(index.replace(/[+-]\d+$/, ""));
       if (id !== null) add(pointers, id, index);
       else if (base) add(strPointers, `${model.fn(step.c)}\u0000${base}`, index);
     }

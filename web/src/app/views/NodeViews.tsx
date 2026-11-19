@@ -1,6 +1,6 @@
 // Drawings of object graphs: linked lists, binary trees, graphs and the recursion tree. All
 // SVG, laid out by detect/layout.ts in abstract units and scaled here.
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import type { View } from "../../detect/detect";
 import { keyOf } from "../../detect/detect";
 import { binaryTrees, graphLayout, linkedChains, memoHits, payload as payloadOf, pointersTo, recursionLayout, visitOrder } from "../../detect/layout";
@@ -275,6 +275,14 @@ export function RecursionView({ view, scene }: { view: View; scene: Scene }) {
       else next.add(id);
       return next;
     });
+  // Keep the running call in view when the tree is wider than the page.
+  const scroller = useRef<HTMLDivElement>(null);
+  const currentX = nodes.find((n) => n.state === "current")?.id;
+  const focusX = currentX !== undefined ? pos.get(currentX)?.x : undefined;
+  useEffect(() => {
+    const el = scroller.current;
+    if (el && focusX !== undefined && el.scrollWidth > el.clientWidth) el.scrollLeft = focusX - el.clientWidth / 2;
+  }, [focusX]);
   const description = `${started.length} of ${total} calls made so far${memoCount ? `, ${memoCount} answered from the memo` : ""}.`;
   return (
     <ViewFrame view={view} scene={scene} description={description} detail={`${started.length} of ${total} calls${memoCount ? `, ${memoCount} memo hits` : ""}`}>
@@ -284,7 +292,7 @@ export function RecursionView({ view, scene }: { view: View; scene: Scene }) {
         <li className="lg-returned">returned</li>
         {memo.size > 0 && <li className="lg-memo">memo hit</li>}
       </ul>
-      <div className="scroll-x" tabIndex={0} role="region" aria-label="recursion tree, scrollable">
+      <div className="scroll-x" tabIndex={0} role="region" aria-label="recursion tree, scrollable" ref={scroller}>
         <svg className="drawing recursion" width={W} height={H} viewBox={`0 0 ${W} ${H}`}>
           {nodes.map((n) => {
             if (n.parent === null || !pos.has(n.parent) || n.state === "pending") return null;

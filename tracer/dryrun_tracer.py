@@ -89,12 +89,13 @@ def _header_nodes(stmt):
 
 
 def _index_name(node):
-    """The variable used as an index: `i`, `i + 1`, `mid - 1` all point with `i`/`mid`."""
+    """The pointer an index is: `i`, or `j-1` for `b[j - 1]` (the arrow goes where the read is)."""
     if isinstance(node, ast.Name):
         return node.id
     if isinstance(node, ast.BinOp) and isinstance(node.op, (ast.Add, ast.Sub)):
-        if isinstance(node.left, ast.Name) and isinstance(node.right, ast.Constant):
-            return node.left.id
+        if isinstance(node.left, ast.Name) and isinstance(node.right, ast.Constant) and type(node.right.value) is int:
+            sign = "+" if isinstance(node.op, ast.Add) else "-"
+            return f"{node.left.id}{sign}{node.right.value}"
     return None
 
 

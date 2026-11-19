@@ -32,6 +32,14 @@ describe("array with pointers", () => {
     ]);
   });
 
+  test("an offset index is its own pointer, and its variable is not guessed onto other arrays", () => {
+    const m = model([{ g: { a: "ab", b: "xy", i: 1, j: 2 }, px: [[null, "a", "i-1"], [null, "b", "j-1"]] }]);
+    expect(detect(m, "").map((v) => [v.name, v.pointers])).toEqual([
+      ["a", ["i-1"]],
+      ["b", ["j-1"]],
+    ]);
+  });
+
   test("a string indexed by pointers is drawn as an array", () => {
     const m = model([{ g: { s: "racecar", i: 0, j: 6 }, px: [[null, "s", "i"], [null, "s", "j"]] }]);
     expect(detect(m, "")).toMatchObject([{ kind: "array", name: "s", pointers: ["i", "j"] }]);

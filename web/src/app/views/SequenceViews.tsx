@@ -57,8 +57,11 @@ export function ArrayView({ view, scene }: { view: View; scene: Scene }) {
   const id = isRef(value) ? value.r : undefined;
   const pointers: { name: string; at: number }[] = [];
   for (const p of view.pointers ?? []) {
-    const v = scene.model.resolve(p, scene.step, view.scope) ?? scene.model.resolve(p, scene.step);
-    if (typeof v === "number" && Number.isInteger(v) && v >= -1 && v <= values.length) pointers.push({ name: p, at: v });
+    // "j-1" is the pointer j read one cell to its left (b[j - 1]): the arrow goes where the read is.
+    const [, base = p, off = "0"] = /^(\w+?)([+-]\d+)?$/.exec(p) ?? [];
+    const raw = scene.model.resolve(base, scene.step, view.scope) ?? scene.model.resolve(base, scene.step);
+    const v = typeof raw === "number" ? raw + Number(off) : undefined;
+    if (v !== undefined && Number.isInteger(v) && v >= -1 && v <= values.length) pointers.push({ name: p, at: v });
   }
   let window: [number, number] | null = null;
   if (view.window) {
