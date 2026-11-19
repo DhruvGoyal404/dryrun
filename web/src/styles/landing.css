@@ -86,7 +86,6 @@
   border: 1px solid var(--edge);
   border-radius: var(--radius);
   background: var(--sheet);
-  box-shadow: var(--shadow);
   overflow: hidden;
 }
 
@@ -282,7 +281,7 @@
 
 .how-cols p {
   color: var(--pencil);
-  max-width: 42ch;
+  max-width: 48ch;
 }
 
 .examples {

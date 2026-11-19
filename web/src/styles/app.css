@@ -426,7 +426,7 @@
   display: grid;
   place-items: center;
   width: var(--cell);
-  height: var(--cell);
+  height: 40px;
   margin-right: -1.5px;
   border: 1.5px solid var(--ink);
   background: var(--sheet);
@@ -478,7 +478,7 @@
 .pointers {
   position: absolute;
   left: 0;
-  top: calc(var(--cell) + 18px);
+  top: 58px;
 }
 
 .pointer {

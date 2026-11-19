@@ -45,7 +45,7 @@ const og = `<style>${BASE}
   .ptrs span { position:absolute; top: 8px; width:58px; text-align:center; } .ptrs span::before { content:"↑"; display:block; font-family: Plex; font-size: 24px; line-height: 1; }
   .foot { grid-column: 1 / -1; display:flex; justify-content:space-between; font-size:22px; color:#575e6c; }
 </style>
-<div><div class="mark">Dry<span>Run</span></div><h1>Your code's dry run, drawn on paper</h1><p>Your own Python, step by step in the browser.</p></div>
+<div><div class="mark">Dry<span>Run</span></div><h1>Your code’s dry run, drawn on paper</h1><p>Your own Python, step by step in the browser.</p></div>
 <div class="sheet">
   <div class="code"><div>while left &lt; right:</div><div>    total = nums[left] + nums[right]</div><div class="now">    if total == target:</div><div>        return (left, right)</div></div>
   <div class="paper"><div class="name">nums</div>

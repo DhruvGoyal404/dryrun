@@ -13,10 +13,10 @@ rule, change this file in its own commit and say why.
 | Milestone | Scope | State |
 |---|---|---|
 | M1 | Tracer: events, identity-preserving snapshots, accesses, caps, pytest + Pyodide smoke | done |
-| M2 | Detectors and visualizers for every structure, with hints and unit tests | in progress |
-| M3 | The app: DESIGN.md first, editor, canvas, timeline, counters, responsive, a11y, offline | |
-| M4 | Compare mode, pattern library, share links | |
-| M5 | e2e, CSP, SEO, Lighthouse, review, README, deploy | |
+| M2 | Detectors and visualizers for every structure, with hints and unit tests | done |
+| M3 | The app: DESIGN.md first, editor, canvas, timeline, counters, responsive, a11y, offline | done |
+| M4 | Compare mode, pattern library, share links | done |
+| M5 | e2e, CSP, SEO, Lighthouse, review, README, deploy | done except the owner's Cloudflare step |
 
 Docs: [README.md](README.md) (for interviewers), [docs/DECISIONS.md](docs/DECISIONS.md)
 (every decision and why), [docs/PROGRESS.md](docs/PROGRESS.md) (running log),
@@ -77,6 +77,42 @@ Docs: [README.md](README.md) (for interviewers), [docs/DECISIONS.md](docs/DECISI
 - Piped CI steps use `set -o pipefail`.
 - `exceptions.yml` runs the dependency check daily. GitHub disables scheduled workflows
   after 60 days without activity: check `gh workflow list` after a quiet spell.
+
+## Web invariants
+
+- Strict CSP from `web/public/_headers`: `script-src 'self' 'wasm-unsafe-eval'`, `style-src
+  'self'`, no inline anything. `web/scripts/serve.mjs` serves `dist` with the same file and
+  the e2e suite runs on it, so a CSP regression fails before it ships. Consequences:
+  CodeMirror lives in a shadow root (its styles become constructable stylesheets, not a
+  `<style>` tag); Vite never inlines assets (`assetsInlineLimit: 0`); the theme is applied by
+  the external `public/theme.js`.
+- Pyodide comes from the npm package, copied to `public/pyodide/<version>/` by
+  `web/scripts/pyodide.mjs`; never from a CDN. The landing page never loads it.
+- The service worker (`scripts/sw-template.js`, written by `vite.config.ts` after the
+  build) precaches the files actually written, never a URL that answers 404, and caches
+  Pyodide on first use.
+- Every colour and face goes through the tokens in `src/styles/tokens.css`, which mirror
+  DESIGN.md; `scripts/contrast.mjs` checks the pairs.
+- Drawings are chosen once per trace (`detect.ts`), one drawing per object; anything not
+  drawn is in the frames panel.
+
+## Deployment
+
+Static files on Cloudflare Pages (free tier), project `dryrun`, custom domain
+dryrun.dhruvgoyal.tech (fallback dryrun.pages.dev). Nothing bills while idle, so there are
+no up/down scripts; the README says so. Cloudflare Web Analytics is off for the zone; the
+live-site job fails if an injected analytics script appears.
+
+- CI's deploy job ships the exact `web/dist` the e2e suite tested (an artifact), with
+  wrangler pinned in `deploy/`, after every other job passes on `main`. It needs the repo
+  secrets `CLOUDFLARE_API_TOKEN` (Account / Cloudflare Pages / Edit, one account) and
+  `CLOUDFLARE_ACCOUNT_ID`; without them it skips.
+- After a deploy, the live-site job checks headers and injected scripts, runs a subset of
+  the e2e suite against the live URL, and runs Lighthouse (`deploy/lighthouse.mjs`, median
+  of three per preset). Targets: SEO, Accessibility, Best Practices 100; Performance >= 95
+  on the landing page.
+- Icons and the OG image are rendered on CI by `web/scripts/assets.mjs`;
+  `web/scripts/shots.mjs` captures review screenshots (CI artifact `screenshots`).
 
 ## Environment
 

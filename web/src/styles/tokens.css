@@ -1,5 +1,7 @@
 /* Hallmark: custom direction "a dry run on paper" (brief-pinned: notebook, graph paper, ink and pencil, clean dark mode) | signature: the program's own structures drawn as on paper | DESIGN.md is the contract */
 /* critique: paper ground + ink/pencil/pen roles carry meaning, never decoration; handwriting only where a person would annotate */
+/* waive 26a: the focus ring is base.css :focus-visible (2px --focus, 3:1 checked by scripts/contrast.mjs); e2e asserts it shows */
+/* waive 54: "How it works" is the section's h2 over three h3 columns, not an eyebrow */
 
 /* Every colour and face in DESIGN.md, nowhere else. scripts/contrast.mjs checks the pairs. */
 @font-face {

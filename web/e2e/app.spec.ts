@@ -6,7 +6,7 @@ test.describe("landing", () => {
     expect(response!.status()).toBe(200);
     expect(response!.headers()["content-security-policy"]).toContain("script-src 'self' 'wasm-unsafe-eval'");
     await expect(page).toHaveTitle(/DryRun/);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your code's dry run, drawn on paper");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your code’s dry run, drawn on paper");
     await expect(page.locator(".examples a")).toHaveCount(20);
     // Pyodide is never loaded by the landing page.
     const requests: string[] = [];
@@ -20,7 +20,7 @@ test.describe("landing", () => {
   test("an unknown path is a real 404", async ({ page, errors }) => {
     const response = await page.goto("/no/such/page");
     expect(response!.status()).toBe(404);
-    await expect(page.getByRole("heading", { level: 1 })).toHaveText("This page isn't in the notebook");
+    await expect(page.getByRole("heading", { level: 1 })).toHaveText("This page isn’t in the notebook");
     // The browser logs the page's own 404 status as a console error; that one is the point.
     errors.splice(0, errors.length, ...errors.filter((e) => !e.includes("status of 404")));
   });

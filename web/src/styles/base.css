@@ -162,8 +162,10 @@ button:disabled {
 }
 
 .btn:disabled {
-  opacity: 0.55;
-  border-color: var(--edge);
+  background: var(--rule);
+  border-color: var(--rule);
+  color: var(--pencil);
+  transform: none;
 }
 
 .btn-primary {
@@ -196,8 +198,8 @@ button:disabled {
 }
 
 .icon-btn:disabled {
+  background: transparent;
   color: var(--pencil);
-  opacity: 0.6;
 }
 
 .icon-btn[aria-pressed="true"] {
