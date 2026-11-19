@@ -41,7 +41,8 @@ async function boot(): Promise<PyodideInterface> {
   const py = await loadPyodide({ indexURL: BASE, stdout: () => {}, stderr: () => {} });
   py.FS.writeFile("/home/pyodide/dryrun_tracer.py", tracerSource);
   py.runPython("import sys\nsys.path.insert(0, '/home/pyodide')\nimport dryrun_tracer");
-  post({ type: "ready", version: py.version, ms: Math.round(performance.now() - started) });
+  const pythonVersion = String(py.runPython("import sys; sys.version.split()[0]"));
+  post({ type: "ready", version: py.version, python: pythonVersion, ms: Math.round(performance.now() - started) });
   return py;
 }
 

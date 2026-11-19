@@ -92,7 +92,7 @@ export function Timeline(p: TimelineProps) {
       <dl className="counters">
         <div>
           <dt>steps</dt>
-          <dd>{counts?.steps ?? 0}</dd>
+          <dd>{p.length}</dd>
         </div>
         <div>
           <dt>calls</dt>

@@ -210,7 +210,16 @@
   margin: 0;
 }
 
+.hero-array .ptr {
+  transition: transform 180ms var(--ease);
+}
+
 .hero-sheet figcaption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s2) var(--s4);
   padding: var(--s2) var(--s5);
   border-top: 1px solid var(--rule);
   font-size: 13px;

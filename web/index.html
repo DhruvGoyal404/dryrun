@@ -68,11 +68,11 @@
             <div class="paper">
               <p class="paper-name"><span class="hand">nums</span> array, 2 pointers</p>
               <svg class="hero-array" viewBox="0 0 330 118" role="img" aria-labelledby="hero-array-title">
-                <title id="hero-array-title">The array 1, 3, 4, 6, 8, 11, 15 with left at index 1 and right at index 5; the window between them is shaded and the two cells just read are marked.</title>
+                <title id="hero-array-title">The array 1, 3, 4, 6, 8, 11, 15 with the pointers left and right under it; the window between them is shaded and the two cells just read are marked.</title>
                 <g class="cells-svg">
-                  <rect class="win" x="44" y="8" width="200" height="40" />
-                  <rect class="rd" x="44" y="8" width="40" height="40" />
-                  <rect class="rd" x="204" y="8" width="40" height="40" />
+                  <rect class="win" id="hero-win" x="44" y="8" width="200" height="40" />
+                  <rect class="rd" id="hero-rd-left" x="44" y="8" width="40" height="40" />
+                  <rect class="rd" id="hero-rd-right" x="204" y="8" width="40" height="40" />
                   <path class="box" d="M4 8h280v40H4zM44 8v40M84 8v40M124 8v40M164 8v40M204 8v40M244 8v40" />
                   <text x="24" y="33">1</text>
                   <text x="64" y="33">3</text>
@@ -89,19 +89,24 @@
                   <text class="idx" x="224" y="62">5</text>
                   <text class="idx" x="264" y="62">6</text>
                 </g>
-                <g class="ptr">
-                  <path d="M64 92V72M59 77l5-5 5 5" />
-                  <text x="64" y="110">left</text>
-                  <path d="M224 92V72M219 77l5-5 5 5" />
-                  <text x="224" y="110">right</text>
+                <g class="ptr" id="hero-left" transform="translate(40 0)">
+                  <path d="M24 92V72M19 77l5-5 5 5" />
+                  <text x="24" y="110">left</text>
+                </g>
+                <g class="ptr" id="hero-right" transform="translate(200 0)">
+                  <path d="M24 92V72M19 77l5-5 5 5" />
+                  <text x="24" y="110">right</text>
                 </g>
               </svg>
               <dl class="paper-vars">
-                <div><dt>total</dt><dd>14</dd></div>
+                <div><dt>total</dt><dd id="hero-total">14</dd></div>
                 <div><dt>target</dt><dd>14</dd></div>
               </dl>
             </div>
-            <figcaption>Step 18 of the two-pointer example, about to run line 11: the pair is found.</figcaption>
+            <figcaption>
+              <span id="hero-caption" aria-live="polite">Step 18, about to run line 11: 3 + 11 is 14, the pair is found.</span>
+              <button class="btn" type="button" id="hero-step" hidden>Show another step</button>
+            </figcaption>
           </figure>
         </div>
       </section>

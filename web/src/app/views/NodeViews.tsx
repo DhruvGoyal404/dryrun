@@ -183,6 +183,11 @@ export function GraphView({ view, scene }: { view: View; scene: Scene }) {
       description={description}
       detail={[view.weighted ? "weighted" : "", view.visited ? `${view.visited} shaded` : "", view.frontier ? `${view.frontier} outlined` : ""].filter(Boolean).join(", ")}
     >
+      <ul className="legend" aria-label="legend">
+        <li className="lg-current">being expanded</li>
+        {view.visited && <li className="lg-visited">in {view.visited}</li>}
+        {view.frontier && <li className="lg-frontier">in {view.frontier}</li>}
+      </ul>
       <div className="scroll-x" tabIndex={0} role="region" aria-label={`${view.name}, scrollable`}>
         <svg className="drawing" width={W} height={H} viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
           <defs>
@@ -246,10 +251,19 @@ export function RecursionView({ view, scene }: { view: View; scene: Scene }) {
       .join(", ");
     return `${c.fn}(${args.length > 22 ? `${args.slice(0, 21)}…` : args})`;
   };
-  const longest = Math.max(8, ...nodes.map((n) => label(n.id).length));
+  // The return value sits inside the box, after the call: edges join box to box.
+  const retText = (id: number, state: string) => {
+    const c = scene.model.calls[id]!;
+    return state === "returned" ? ` → ${cell(c.r, scene.model, c.e ?? scene.step)}` : state === "raised" ? " raised" : "";
+  };
+  const fullText = (id: number) => {
+    const c = scene.model.calls[id]!;
+    return label(id) + (c.e !== undefined ? retText(id, c.raised ? "raised" : "returned") : "");
+  };
+  const longest = Math.max(8, ...nodes.map((n) => fullText(n.id).length));
   const BOX = Math.round(longest * 7.4 + 16);
-  const GX = BOX + 14;
-  const GY = 80;
+  const GX = BOX + 40;
+  const GY = 64;
   const W = Math.max(1, width) * GX + 20;
   const H = depth * GY + 36;
   const pos = new Map(nodes.map((n) => [n.id, { x: 10 + n.x * GX + GX / 2, y: 30 + n.depth * GY }]));
@@ -276,29 +290,26 @@ export function RecursionView({ view, scene }: { view: View; scene: Scene }) {
             if (n.parent === null || !pos.has(n.parent) || n.state === "pending") return null;
             const a = pos.get(n.parent)!;
             const b = pos.get(n.id)!;
-            return <line key={`e${n.id}`} className={`edge ${n.state === "active" || n.state === "current" ? "is-path" : ""}`} x1={a.x} y1={a.y + 34} x2={b.x} y2={b.y - 14} />;
+            return <line key={`e${n.id}`} className={`edge ${n.state === "active" || n.state === "current" ? "is-path" : ""}`} x1={a.x} y1={a.y + 14} x2={b.x} y2={b.y - 14} />;
           })}
           {nodes.map((n) => {
             if (n.state === "pending") return null;
             const p = pos.get(n.id)!;
-            const c = scene.model.calls[n.id]!;
-            const ret = n.state === "returned" ? `→ ${cell(c.r, scene.model, c.e ?? scene.step)}` : n.state === "raised" ? "raised" : "";
+            const ret = retText(n.id, n.state).trim();
             const cls = ["call", `is-${n.state}`, n.memo ? "is-memo" : ""].join(" ");
             const text = label(n.id);
             return (
               <g key={n.id} className={cls} transform={`translate(${p.x} ${p.y})`}>
                 <title>{`${text}${ret ? ` ${ret}` : ""}${n.memo ? ", from the memo" : ""}`}</title>
                 <rect x={-BOX / 2} y="-14" width={BOX} height="28" rx="4" />
-                <text dy="0.35em">{text}</text>
-                {ret && (
-                  <text className="ret" y="26">
-                    {ret}
-                  </text>
-                )}
+                <text dy="0.35em">
+                  {text}
+                  {ret && <tspan className="ret"> {ret}</tspan>}
+                </text>
                 {n.hidden > 0 && (
                   <g className="fold" role="button" tabIndex={0} aria-label={`Show ${n.hidden} hidden calls under ${text}`} onClick={() => toggle(n.id)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggle(n.id)}>
-                    <rect x="-22" y="34" width="44" height="20" rx="10" />
-                    <text y="44" dy="0.35em">
+                    <rect x={BOX / 2 + 4} y="-10" width="34" height="20" rx="10" />
+                    <text x={BOX / 2 + 21} y="0" dy="0.35em">
                       +{n.hidden}
                     </text>
                   </g>

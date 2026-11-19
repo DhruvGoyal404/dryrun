@@ -501,7 +501,7 @@ export function App() {
               </button>
               <span id="run-status" className="run-status">
                 {status.state === "loading" && `Loading Python, ${pct}%`}
-                {status.state === "ready" && `Python ${status.version} ready, running in your browser`}
+                {status.state === "ready" && `Python ${status.python} (Pyodide ${status.version}) ready, running in your browser`}
                 {status.state === "failed" && `Python failed to load: ${status.message}`}
                 <kbd className="kbd-hint">Ctrl</kbd>
                 <kbd className="kbd-hint">Enter</kbd>

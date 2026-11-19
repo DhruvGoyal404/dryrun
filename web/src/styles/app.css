@@ -452,12 +452,12 @@
 .cell-index {
   position: absolute;
   top: calc(100% + 2px);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--pencil);
 }
 
 .cell.in-window {
-  background: color-mix(in srgb, var(--blue) 12%, var(--sheet));
+  background: color-mix(in srgb, var(--blue) 20%, var(--sheet));
 }
 
 .cell.is-read,
@@ -521,6 +521,7 @@
 
 .grid thead td {
   border: 0;
+  background: transparent;
 }
 
 .grid th,
@@ -528,7 +529,7 @@
 .compare-table thead th {
   padding: 2px 6px;
   font-weight: 400;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--pencil);
 }
 
@@ -695,7 +696,7 @@
 .drawing .order {
   fill: var(--amber);
   font-family: var(--hand);
-  font-size: 18px;
+  font-size: 22px;
 }
 
 .drawing .weight {
@@ -714,7 +715,7 @@
 .drawing .tag text {
   fill: var(--blue);
   font-family: var(--hand);
-  font-size: 19px;
+  font-size: 22px;
 }
 
 .drawing .tag-line {
@@ -756,6 +757,16 @@
 
 .lg-returned::before {
   background: color-mix(in srgb, var(--green) 24%, var(--sheet));
+}
+
+.lg-visited::before {
+  background: color-mix(in srgb, var(--amber) 28%, var(--sheet));
+}
+
+.lg-frontier::before {
+  border-color: var(--blue) !important;
+  border-style: dashed !important;
+  border-width: 2px !important;
 }
 
 .lg-memo::before {
@@ -1037,7 +1048,7 @@
 
 .scrub input[type="range"] {
   width: 100%;
-  accent-color: var(--red);
+  accent-color: var(--ink);
 }
 
 .where {
@@ -1196,6 +1207,35 @@
 }
 
 /* ---- responsive ------------------------------------------------------------------- */
+
+/* Wide screens: drawings on the left, the frames and output (their text equivalent) in a
+   sticky column on the right, always in view. */
+@media (min-width: 1280px) {
+  .single > .side {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 340px);
+    align-items: start;
+  }
+
+  .single > .side > .banner {
+    grid-column: 1 / -1;
+  }
+
+  .single > .side > .canvas-inner {
+    grid-column: 1;
+  }
+
+  .single > .side > .below {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    position: sticky;
+    top: 0;
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .single > .side > .banner ~ .below {
+    grid-row: 2 / span 2;
+  }
+}
 
 @media (max-width: 1279px) {
   .below,

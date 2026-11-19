@@ -10,7 +10,7 @@ export const WATCHDOG_MS = 15_000;
 export type EngineStatus =
   | { state: "idle" }
   | { state: "loading"; loaded: number; total: number }
-  | { state: "ready"; version: string }
+  | { state: "ready"; version: string; python: string }
   | { state: "failed"; message: string };
 
 type Listener = (status: EngineStatus) => void;
@@ -41,7 +41,7 @@ export class Engine {
     worker.onmessage = (event: MessageEvent<FromWorker>) => {
       const msg = event.data;
       if (msg.type === "progress") this.set({ state: "loading", loaded: msg.loaded, total: msg.total });
-      else if (msg.type === "ready") this.set({ state: "ready", version: msg.version });
+      else if (msg.type === "ready") this.set({ state: "ready", version: msg.version, python: msg.python });
       else if (msg.type === "boot-failed") this.set({ state: "failed", message: msg.message });
       else this.pending.get(msg.id)?.(msg);
     };

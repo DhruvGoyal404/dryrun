@@ -90,7 +90,7 @@ export function recursionLayout(model: Model, step: number, opts: { collapseOver
   const onPath = new Set<number>();
   for (let c: number | null | undefined = current; c !== null && c !== undefined && c >= 0; c = model.calls[c]?.p) onPath.add(c);
   const total = ids.size;
-  const limit = opts.collapseOver ?? (total > 120 ? 20 : Infinity);
+  const limit = opts.collapseOver ?? (total > 40 ? 6 : Infinity);
 
   const nodes: CallNode[] = [];
   let nextX = 0;

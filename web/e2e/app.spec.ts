@@ -8,6 +8,10 @@ test.describe("landing", () => {
     await expect(page).toHaveTitle(/DryRun/);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("Your code’s dry run, drawn on paper");
     await expect(page.locator(".examples a")).toHaveCount(20);
+    // The hero steps through the real trace's three visits to line 11.
+    await page.getByRole("button", { name: "Show another step" }).click();
+    await expect(page.locator("#hero-caption")).toContainText("Step 8");
+    await expect(page.locator("#hero-total")).toHaveText("16");
     // Pyodide is never loaded by the landing page.
     const requests: string[] = [];
     page.on("request", (r) => requests.push(r.url()));

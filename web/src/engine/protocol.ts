@@ -14,7 +14,7 @@ export type ToWorker = { type: "boot" } | ({ type: "run"; id: number } & RunRequ
 
 export type FromWorker =
   | { type: "progress"; loaded: number; total: number }
-  | { type: "ready"; version: string; ms: number }
+  | { type: "ready"; version: string; python: string; ms: number }
   | { type: "boot-failed"; message: string }
   | { type: "tick"; id: number; step: number; line: number }
   | { type: "result"; id: number; json: string; ms: number }

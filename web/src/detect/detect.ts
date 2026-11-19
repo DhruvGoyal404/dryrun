@@ -151,6 +151,8 @@ interface Usage {
   ops: Map<number, Set<string>>;
   pointers: Map<number, Set<string>>;
   strPointers: Map<string, Set<string>>;
+  /** Every variable used as an index of anything. */
+  indexVars: Set<string>;
   touched: Set<number>;
 }
 
@@ -159,6 +161,7 @@ function usage(model: Model): Usage {
   const pointers = new Map<number, Set<string>>();
   const strPointers = new Map<string, Set<string>>();
   const touched = new Set<number>();
+  const indexVars = new Set<string>();
   const add = <K>(m: Map<K, Set<string>>, k: K, v: string) => {
     let s = m.get(k);
     if (!s) m.set(k, (s = new Set()));
@@ -167,13 +170,14 @@ function usage(model: Model): Usage {
   for (const step of model.steps) {
     for (const [id, method] of step.ops ?? []) add(ops, id, method);
     for (const [id, base, index] of step.px ?? []) {
+      indexVars.add(index);
       if (id !== null) add(pointers, id, index);
       else if (base) add(strPointers, `${model.fn(step.c)}\u0000${base}`, index);
     }
     for (const [id] of step.rd ?? []) touched.add(id);
     for (const [id] of step.wr ?? []) touched.add(id);
   }
-  return { ops, pointers, strPointers, touched };
+  return { ops, pointers, strPointers, touched, indexVars };
 }
 
 const ORDER: ViewKind[] = ["grid", "graph", "tree", "linked", "heap", "array", "stack", "queue", "map", "set", "recursion"];
@@ -278,7 +282,8 @@ export function detect(model: Model, code: string): View[] {
       if (!view.pointers) {
         // Pointer-named ints in the same scope (binary search's lo and hi are never indexes).
         for (const b of model.bindings()) {
-          if (b.scope !== scope || !POINTER_NAMES.has(b.name) || ptrs.size === 0) continue;
+          // A name that indexes some other container belongs under that one (lcs: i under a, j under b).
+          if (b.scope !== scope || !POINTER_NAMES.has(b.name) || ptrs.size === 0 || use.indexVars.has(b.name)) continue;
           if (model.history(b.scope, b.name).every(({ value }) => typeof value === "number")) ptrs.add(b.name);
         }
       }

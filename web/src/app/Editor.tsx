@@ -179,7 +179,7 @@ export function Editor({ value, onChange, label, current, error, hits, onRunToLi
     if (!v) return;
     v.dispatch({ effects: setMarks.of({ current, error, hits }) });
     if (current !== null && current >= 1 && current <= v.state.doc.lines) {
-      v.dispatch({ effects: EditorView.scrollIntoView(v.state.doc.line(current).from, { y: "nearest" }) });
+      v.dispatch({ effects: EditorView.scrollIntoView(v.state.doc.line(current).from, { y: "center" }) });
     }
   }, [current, error, hits]);
 

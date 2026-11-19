@@ -23,6 +23,15 @@ describe("array with pointers", () => {
     expect(view!.window).toEqual(["lo", "hi"]);
   });
 
+  test("a pointer that indexes another array is not drawn under this one", () => {
+    const m = model([{ g: { a: "abc", b: "xyz", i: 1, j: 2 }, px: [[null, "a", "i"], [null, "b", "j"]] }]);
+    const views = detect(m, "");
+    expect(views.map((v) => [v.name, v.pointers])).toEqual([
+      ["a", ["i"]],
+      ["b", ["j"]],
+    ]);
+  });
+
   test("a string indexed by pointers is drawn as an array", () => {
     const m = model([{ g: { s: "racecar", i: 0, j: 6 }, px: [[null, "s", "i"], [null, "s", "j"]] }]);
     expect(detect(m, "")).toMatchObject([{ kind: "array", name: "s", pointers: ["i", "j"] }]);
