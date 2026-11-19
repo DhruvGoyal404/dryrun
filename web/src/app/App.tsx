@@ -312,7 +312,8 @@ export function App() {
       return;
     }
     const target = e.target as HTMLElement | null;
-    if (dialog || e.ctrlKey || e.metaKey || e.altKey) return;
+    // The DOM, not React state: state can lag the native dialog closing by a render.
+    if (document.querySelector("dialog[open]") || e.ctrlKey || e.metaKey || e.altKey) return;
     // Events from the editor's shadow root arrive retargeted to its host, .editor.
     if (target?.closest(".editor, input, textarea, select, [contenteditable='true']")) {
       if (e.key === "Escape" && target.closest(".editor")) (document.querySelector(".run-btn") as HTMLElement | null)?.focus();
