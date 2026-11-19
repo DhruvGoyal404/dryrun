@@ -1,0 +1,13 @@
+{
+  "name": "dryrun-deploy",
+  "private": true,
+  "description": "Pinned Cloudflare and Lighthouse tooling for the deploy and lighthouse jobs (.github/workflows/ci.yml). Kept apart from web/ so app installs never download it.",
+  "devDependencies": {
+    "lighthouse": "13.6.0",
+    "wrangler": "4.156.0"
+  },
+  "overrides": {
+    "glob": "14.0.3",
+    "minimatch": "11.0.3"
+  }
+}

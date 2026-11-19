@@ -35,3 +35,5 @@ passes the 14-day rule.
 | Where | Package | Version | Advisory | Recorded | Expires |
 |---|---|---|---|---|---|
 | web | minimatch | 11.0.3 | GHSA-g3hv-75wg-m249 (via eslint, typescript-eslint; dev only) | 2026-11-19 | 2026-12-31 |
+| deploy | minimatch | 11.0.3 | GHSA-g3hv-75wg-m249 (via lighthouse's error reporter; CI only) | 2026-11-19 | 2026-12-31 |
+| deploy | glob | 14.0.3 | GHSA-3g3m-2fjr-6pw4 (via lighthouse's error reporter; CI only) | 2026-11-19 | 2026-12-31 |
