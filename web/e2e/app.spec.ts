@@ -21,7 +21,8 @@ test.describe("landing", () => {
     const response = await page.goto("/no/such/page");
     expect(response!.status()).toBe(404);
     await expect(page.getByRole("heading", { level: 1 })).toHaveText("This page isn't in the notebook");
-    void errors;
+    // The browser logs the page's own 404 status as a console error; that one is the point.
+    errors.splice(0, errors.length, ...errors.filter((e) => !e.includes("status of 404")));
   });
 });
 
@@ -131,11 +132,13 @@ test.describe("app", () => {
   test("works offline after the first visit", async ({ page, context, errors }) => {
     await page.goto("/app#ex=09-memo-dp");
     await expect(page.locator(".where")).toContainText(/step 1 of \d+/, { timeout: 60_000 });
-    await page.evaluate(async () => {
-      await navigator.serviceWorker.ready;
-    });
     // The service worker controls the page from its first activation (clients.claim).
-    await expect.poll(() => page.evaluate(() => !!navigator.serviceWorker.controller)).toBe(true);
+    await expect
+      .poll(() => page.evaluate(async () => {
+        const reg = await navigator.serviceWorker.getRegistration();
+        return navigator.serviceWorker.controller ? "controlling" : reg ? `registered: ${reg.installing ? "installing" : reg.waiting ? "waiting" : reg.active?.state}` : "no registration";
+      }), { timeout: 30_000 })
+      .toBe("controlling");
     // A reload under the worker caches Python on the way through.
     await page.reload();
     await expect(page.locator(".where")).toContainText(/step 1 of \d+/, { timeout: 60_000 });

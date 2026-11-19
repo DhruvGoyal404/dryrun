@@ -16,6 +16,7 @@ import {
 } from "@codemirror/view";
 import { tags as t } from "@lezer/highlight";
 import { useEffect, useRef } from "react";
+import editorCss from "../styles/editor.css?inline";
 
 interface Marks {
   current: number | null;
@@ -118,8 +119,18 @@ export function Editor({ value, onChange, label, current, error, hits, onRunToLi
   const labelling = useRef(new Compartment());
 
   useEffect(() => {
+    // A shadow root, so CodeMirror's styles and ours are constructable stylesheets (the CSP
+    // blocks the <style> tag CodeMirror would otherwise add to the document).
+    const shadow = host.current!.shadowRoot ?? host.current!.attachShadow({ mode: "open" });
+    const sheet = new CSSStyleSheet();
+    sheet.replaceSync(editorCss);
+    shadow.adoptedStyleSheets = [sheet];
+    const mount = document.createElement("div");
+    mount.className = "cm-host";
+    shadow.replaceChildren(mount);
     const v = new EditorView({
-      parent: host.current!,
+      root: shadow,
+      parent: mount,
       state: EditorState.create({
         doc: value,
         extensions: [

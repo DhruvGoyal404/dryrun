@@ -313,8 +313,9 @@ export function App() {
     }
     const target = e.target as HTMLElement | null;
     if (dialog || e.ctrlKey || e.metaKey || e.altKey) return;
-    if (target?.closest(".cm-editor, input, textarea, select, [contenteditable='true']")) {
-      if (e.key === "Escape" && target.closest(".cm-editor")) (document.querySelector(".run-btn") as HTMLElement | null)?.focus();
+    // Events from the editor's shadow root arrive retargeted to its host, .editor.
+    if (target?.closest(".editor, input, textarea, select, [contenteditable='true']")) {
+      if (e.key === "Escape" && target.closest(".editor")) (document.querySelector(".run-btn") as HTMLElement | null)?.focus();
       return;
     }
     const model = runA?.model;
@@ -331,7 +332,7 @@ export function App() {
       "+": () => setSpeed((s) => SPEEDS[Math.min(SPEEDS.length - 1, SPEEDS.indexOf(s) + 1)]!),
       "=": () => setSpeed((s) => SPEEDS[Math.min(SPEEDS.length - 1, SPEEDS.indexOf(s) + 1)]!),
       "-": () => setSpeed((s) => SPEEDS[Math.max(0, SPEEDS.indexOf(s) - 1)]!),
-      e: () => (document.querySelector("#editor-a .cm-content") as HTMLElement | null)?.focus(),
+      e: () => (document.getElementById("editor-a")?.shadowRoot?.querySelector(".cm-content") as HTMLElement | null)?.focus(),
       o: () => setDialog("library"),
       c: () => setCompare((c) => !c),
       s: () => void share(),

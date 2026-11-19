@@ -70,7 +70,7 @@
 .lede {
   margin-top: var(--s4);
   max-width: 34ch;
-  font-size: 20px;
+  font-size: 21px;
   color: var(--pencil);
 }
 
@@ -276,7 +276,7 @@
 }
 
 .how-cols h3 {
-  font-size: 20px;
+  font-size: 24px;
   margin-bottom: var(--s2);
 }
 

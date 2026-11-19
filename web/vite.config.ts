@@ -76,6 +76,8 @@ export default defineConfig({
   server: { fs: { allow: [".."] } },
   build: {
     target: "es2022",
+    // Never inline fonts or images as data: URIs; the CSP allows fonts from 'self' only.
+    assetsInlineLimit: 0,
     rollupOptions: { input: { index: "index.html", app: "app.html", 404: "404.html" } },
   },
   test: {

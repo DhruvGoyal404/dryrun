@@ -1,0 +1,126 @@
+/* The editor's own styles. CodeMirror lives in a shadow root (app/Editor.tsx) so that its
+   styles and ours are adopted as constructable stylesheets, which the strict CSP
+   (style-src 'self', no 'unsafe-inline') allows; a <style> tag would be blocked. The colour
+   tokens inherit through the shadow boundary. */
+
+.cm-host {
+  height: 100%;
+}
+
+.cm-editor {
+  height: 100%;
+  font-size: 14px;
+}
+
+.cm-editor.cm-focused {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.cm-editor .cm-scroller {
+  font-family: var(--mono);
+  line-height: 1.6;
+}
+
+.cm-editor .cm-content {
+  caret-color: var(--red);
+  padding: var(--s2) 0;
+}
+
+.cm-editor .cm-cursor {
+  border-left: 2px solid var(--red);
+}
+
+.cm-editor .cm-gutters {
+  background: var(--paper);
+  border-right: 1px solid var(--rule);
+  color: var(--pencil);
+}
+
+.cm-editor .cm-activeLine {
+  background: color-mix(in srgb, var(--rule) 45%, transparent);
+}
+
+.cm-editor .cm-activeLineGutter {
+  background: transparent;
+  color: var(--ink);
+}
+
+.cm-editor .cm-selectionBackground,
+.cm-editor.cm-focused .cm-selectionBackground {
+  background: var(--mark) !important;
+}
+
+.cm-editor .cm-matchingBracket {
+  background: var(--read);
+  outline: none;
+}
+
+/* The line about to run: a red-pen bar in the margin and a pale wash. */
+.cm-editor .cm-now {
+  background: color-mix(in srgb, var(--red) 13%, transparent);
+  box-shadow: inset 3px 0 0 var(--red);
+}
+
+.cm-editor .cm-error-line {
+  background: color-mix(in srgb, var(--red) 22%, transparent);
+  text-decoration: underline wavy var(--red);
+  text-decoration-skip-ink: none;
+}
+
+.cm-editor .cm-heat-gutter {
+  min-width: 34px;
+}
+
+.cm-editor .cm-heat {
+  display: block;
+  margin: 1px 4px 1px 2px;
+  padding: 0 4px;
+  border-radius: 3px;
+  font-size: 11px;
+  text-align: right;
+  cursor: pointer;
+  color: var(--ink);
+}
+
+.cm-editor .cm-heat-1 {
+  background: color-mix(in srgb, var(--amber) 14%, transparent);
+}
+
+.cm-editor .cm-heat-2 {
+  background: color-mix(in srgb, var(--amber) 26%, transparent);
+}
+
+.cm-editor .cm-heat-3 {
+  background: color-mix(in srgb, var(--amber) 40%, transparent);
+}
+
+.cm-editor .cm-heat-4 {
+  background: color-mix(in srgb, var(--amber) 56%, transparent);
+}
+
+.cm-editor .tok-kw {
+  color: var(--blue);
+  font-weight: 600;
+}
+
+.cm-editor .tok-str {
+  color: var(--green);
+}
+
+.cm-editor .tok-num {
+  color: var(--amber);
+}
+
+.cm-editor .tok-comment {
+  color: var(--pencil);
+  font-style: italic;
+}
+
+.cm-editor .tok-def {
+  color: var(--red);
+}
+
+.cm-editor .tok-self {
+  color: var(--blue);
+}
