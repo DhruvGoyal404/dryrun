@@ -10,6 +10,9 @@ import { changedIndices, items, justRan, type Scene, valueAt, ViewFrame } from "
 
 const vars = (o: Record<string, number | string>) => o as CSSProperties;
 
+/** Cell width for the widest value, so (4, 'Q') fits; one width per array keeps pointers aligned. */
+export const cellWidth = (labels: string[]) => `${Math.max(40, Math.round(Math.max(0, ...labels.map((l) => l.length)) * 8.6 + 14))}px`;
+
 function Cells({
   values,
   scene,
@@ -74,7 +77,7 @@ export function ArrayView({ view, scene }: { view: View; scene: Scene }) {
   return (
     <ViewFrame view={view} scene={scene} stale={stale} description={description} detail={pointers.length ? `${pointers.length} pointer${pointers.length > 1 ? "s" : ""}` : undefined}>
       <div className="scroll-x" tabIndex={0} role="region" aria-label={`${view.name}, scrollable`}>
-        <div className="array" style={vars({ "--rows": rows })}>
+        <div className="array" style={vars({ "--rows": rows, "--cell": cellWidth(values.map((v) => cell(v, scene.model, scene.step))) })}>
           <Cells values={values} scene={scene} id={id} window={window} label={view.name} />
           <div className="pointers" aria-hidden="true">
             {placed.map((p) => (
@@ -235,7 +238,6 @@ export function SetView({ view, scene }: { view: View; scene: Scene }) {
   );
 }
 
-const NODE_GAP = 56;
 const LEVEL_GAP = 56;
 
 export function HeapView({ view, scene }: { view: View; scene: Scene }) {
@@ -245,6 +247,9 @@ export function HeapView({ view, scene }: { view: View; scene: Scene }) {
   const values = items(obj);
   const changed = changedIndices(scene.model, scene.step, id);
   const pos = heapLayout(values.length);
+  const labels = values.map((v) => cell(v, scene.model, scene.step));
+  const nodeW = Math.max(36, Math.max(0, ...labels.map((l) => l.length)) * 7.6 + 14);
+  const NODE_GAP = Math.max(56, nodeW + 12);
   const width = Math.max(1, 2 ** Math.max(0, Math.floor(Math.log2(Math.max(1, values.length)))));
   const depth = Math.max(1, ...pos.map((p) => p.depth + 1));
   const W = width * NODE_GAP + 24;
@@ -262,13 +267,15 @@ export function HeapView({ view, scene }: { view: View; scene: Scene }) {
               {pos.map((p) => p.parent !== null && <line key={`e${p.i}`} className="edge" x1={x(p.parent)} y1={y(p.parent)} x2={x(p.i)} y2={y(p.i)} />)}
               {pos.map((p) => (
                 <g key={p.i} className={changed.has(p.i) ? "node is-written" : "node"} transform={`translate(${x(p.i)} ${y(p.i)})`}>
-                  <circle r="18" />
-                  <text dy="0.35em">{cell(values[p.i], scene.model, scene.step)}</text>
+                  <rect x={-nodeW / 2} y="-16" width={nodeW} height="32" rx="16" />
+                  <text dy="0.35em">{labels[p.i]}</text>
                 </g>
               ))}
             </svg>
           </div>
-          <Cells values={values} scene={scene} id={id} label={`${view.name} as an array`} />
+          <div style={vars({ "--cell": cellWidth(labels) })}>
+            <Cells values={values} scene={scene} id={id} label={`${view.name} as an array`} />
+          </div>
         </div>
       )}
     </ViewFrame>

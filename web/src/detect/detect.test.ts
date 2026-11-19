@@ -28,9 +28,22 @@ describe("array with pointers", () => {
     expect(detect(m, "")).toMatchObject([{ kind: "array", name: "s", pointers: ["i", "j"] }]);
   });
 
-  test("aliasing: two names for one list both pick up pointers used through either", () => {
+  test("aliasing: two names for one list are one drawing, labelled with both", () => {
     const m = model([{ g: { a: ref(1), b: ref(1), i: 0 }, h: { 1: list(5, 6) }, px: [[1, "b", "i"]] }]);
-    expect(kinds(detect(m, ""))).toEqual(["array:a", "array:b"]);
+    const views = detect(m, "");
+    expect(kinds(views)).toEqual(["array:a"]);
+    expect(views[0]).toMatchObject({ aliases: ["b"], pointers: ["i"] });
+  });
+
+  test("a closure's variable is drawn once, in the outer function", () => {
+    const m = model(
+      [
+        { c: 1, v: { 1: { items: ref(1), i: 0 } }, h: { 1: list("a", "b") }, px: [[1, "items", "i"]] },
+        { c: 2, v: { 2: { items: ref(1), i: 1 } }, px: [[1, "items", "i"]] },
+      ],
+      [{ fn: "choose" }, { fn: "go", p: 1, d: 2 }],
+    );
+    expect(detect(m, "").map((v) => `${v.scope}:${v.name}`)).toEqual(["choose:items"]);
   });
 
   test("an untouched helper list is left to the variables panel", () => {

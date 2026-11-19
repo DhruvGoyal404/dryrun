@@ -32,6 +32,8 @@ export interface View {
   visited?: string;
   frontier?: string;
   weighted?: boolean;
+  /** Other names bound to the same object (aliases, or a closure's view of it). */
+  aliases?: string[];
   /** Set when a `# dryrun:` comment chose this view. */
   hinted?: boolean;
 }
@@ -60,7 +62,8 @@ export function parseHints(code: string): { hints: Hint[]; problems: string[] } 
 }
 
 const POINTER_NAMES = new Set(
-  "i j k l r lo hi low high mid left right start end slow fast p q p1 p2 read write head tail".split(" "),
+  // Not k, n or m: those are usually counts, and an arrow would claim they index the array.
+  "i j l r lo hi low high mid left right start end slow fast p1 p2 read write head tail".split(" "),
 );
 const WINDOW_PAIRS: [string, string][] = [
   ["left", "right"],
@@ -198,6 +201,7 @@ export function detect(model: Model, code: string): View[] {
   const views: View[] = [];
   const objectKinds = new Set<"linked" | "tree">();
   const nodeClasses = new Map<string, string>();
+  const drawn = new Map<string, View>();
 
   for (const { scope, name } of model.bindings()) {
     if (hidden.has(name)) continue;
@@ -260,7 +264,15 @@ export function detect(model: Model, code: string): View[] {
       else if (obj.t === "set" || obj.t === "frozenset") kind = "set";
     }
     if (!kind) continue;
+    // A closure variable appears in the inner function's frame too: one object, one drawing.
+    const identity = refs.size ? `${kind}:${[...refs].sort((a, b) => a - b).join(",")}` : "";
+    const twin = identity ? drawn.get(identity) : undefined;
+    if (twin) {
+      if (twin.name !== name && !twin.aliases?.includes(name)) twin.aliases = [...(twin.aliases ?? []), name];
+      continue;
+    }
     const view: View = { kind, scope, name, ...extra, ...(hint ? { hinted: true } : {}) };
+    if (identity) drawn.set(identity, view);
     if (kind === "array") {
       const ptrs = new Set(view.pointers ?? pointers);
       if (!view.pointers) {

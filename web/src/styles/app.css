@@ -3,7 +3,7 @@
 
 .app {
   display: grid;
-  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  grid-template-rows: auto minmax(0, 1fr) auto;
   height: 100dvh;
   min-height: 0;
 }
@@ -519,6 +519,10 @@
   font-size: 14px;
 }
 
+.grid thead td {
+  border: 0;
+}
+
 .grid th,
 .map thead th,
 .compare-table thead th {
@@ -660,6 +664,7 @@
 }
 
 .drawing .node circle,
+.drawing .node rect,
 .drawing .lnode rect {
   fill: var(--sheet);
   stroke: var(--ink);
@@ -682,6 +687,7 @@
 }
 
 .drawing .node.is-written circle,
+.drawing .node.is-written rect,
 .drawing .lnode.is-written rect {
   fill: var(--mark);
 }
@@ -1228,6 +1234,10 @@
 
   .top-actions .btn {
     padding: 0 var(--s3);
+  }
+
+  .app {
+    grid-template-rows: auto auto minmax(0, 1fr) auto;
   }
 
   .tabs {

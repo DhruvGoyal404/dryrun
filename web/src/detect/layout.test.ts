@@ -78,6 +78,19 @@ describe("binary trees", () => {
     expect(visitOrder(m, 1)).toEqual([2, 1]);
     expect(visitOrder(m, 2)).toEqual([2, 1, 3]);
   });
+
+  test("only the walking function's reads count, not the comparisons that built the tree", () => {
+    const m = model(
+      [
+        { c: 1, g: { root: ref(1) }, h, ar: [[1, "val"], [3, "val"]] }, // insert compares 2, then 3
+        { c: 2, ar: [[2, "val"]] }, // the in-order walk starts at 1
+        { c: 2, ar: [[1, "val"]] },
+      ],
+      [{ fn: "insert" }, { fn: "walk" }],
+    );
+    expect(visitOrder(m, 0)).toEqual([1, 3]);
+    expect(visitOrder(m, 2)).toEqual([2, 1]);
+  });
 });
 
 describe("linked lists", () => {

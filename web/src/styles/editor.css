@@ -18,6 +18,8 @@
 }
 
 .cm-editor .cm-scroller {
+  /* No ligatures: a learner should see == and <=, not one glyph standing for them. */
+  font-variant-ligatures: none;
   font-family: var(--mono);
   line-height: 1.6;
 }

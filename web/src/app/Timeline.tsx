@@ -26,7 +26,7 @@ export function Timeline(p: TimelineProps) {
   const last = Math.max(0, p.length - 1);
   const s = p.model?.steps[Math.min(p.step, p.model.length - 1)];
   const counts = p.model?.trace.counts;
-  const event = !s ? "" : s.e === "c" ? "call" : s.e === "r" ? "return" : s.e === "x" ? "exception" : s.e === "end" ? "finished" : "line";
+  const event = !s ? "" : s.e === "c" ? "a call at" : s.e === "r" ? "a return at" : s.e === "x" ? "an exception at" : s.e === "end" ? "finished" : "about to run";
   return (
     <div className="timeline" role="group" aria-label="Replay">
       <div className="transport">
@@ -81,7 +81,7 @@ export function Timeline(p: TimelineProps) {
               step <b>{p.step + 1}</b> of {p.length}
               {s && s.e !== "end" && (
                 <>
-                  , {event} at line <b>{s.ln}</b>
+                  , {event} line <b>{s.ln}</b>
                 </>
               )}
               {s?.e === "end" && ", finished"}

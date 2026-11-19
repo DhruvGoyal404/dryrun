@@ -3,9 +3,10 @@
 import { useMemo, useState } from "react";
 import type { View } from "../../detect/detect";
 import { keyOf } from "../../detect/detect";
-import { binaryTrees, graphLayout, linkedChains, memoHits, pointersTo, recursionLayout, visitOrder } from "../../detect/layout";
+import { binaryTrees, graphLayout, linkedChains, memoHits, payload as payloadOf, pointersTo, recursionLayout, visitOrder } from "../../detect/layout";
 import { cell, show } from "../../trace/format";
 import { isRef } from "../../trace/model";
+import type { Value } from "../../trace/types";
 import { items, type Scene, valueAt, ViewFrame } from "./common";
 
 const BOX_W = 52;
@@ -171,8 +172,8 @@ export function GraphView({ view, scene }: { view: View; scene: Scene }) {
   const GX = 110;
   const GY = 70;
   const W = layout.width * GX + 40;
-  const H = layout.height * GY + 30;
-  const at = new Map(layout.nodes.map((n) => [n.key, { x: 40 + n.x * GX, y: 36 + n.y * GY }]));
+  const H = layout.height * GY + 52;
+  const at = new Map(layout.nodes.map((n) => [n.key, { x: 40 + n.x * GX, y: 58 + n.y * GY }]));
   const description = `${view.name}: ${layout.nodes.length} nodes, ${layout.edges.length} edges. ${view.visited ? `${visited.size} in ${view.visited}. ` : ""}${view.frontier ? `${frontier.size} in ${view.frontier}.` : ""}`;
   return (
     <ViewFrame
@@ -229,18 +230,29 @@ export function RecursionView({ view, scene }: { view: View; scene: Scene }) {
   const memo = useMemo(() => memoHits(scene.model), [scene.model]);
   const { nodes, width, depth, total } = recursionLayout(scene.model, scene.step, { expanded, memo });
   const started = nodes.filter((n) => n.state !== "pending");
-  const GX = 92;
-  const GY = 68;
-  const W = Math.max(1, width) * GX + 20;
-  const H = depth * GY + 20;
-  const pos = new Map(nodes.map((n) => [n.id, { x: 10 + n.x * GX + GX / 2, y: 30 + n.depth * GY }]));
+  // Containers passed along (the memo, the grid) would crowd every node: they show as […] or {…}.
+  const arg = (a: Value, at: number) => {
+    const o = scene.model.deref(a, at);
+    if (!o) return cell(a, scene.model, at);
+    if (o.t === "list" || o.t === "deque") return "[…]";
+    if (o.t === "dict" || o.t === "set" || o.t === "frozenset") return "{…}";
+    if (o.t === "obj") return cell(payloadOf(o.v), scene.model, at) || o.cls;
+    return cell(a, scene.model, at);
+  };
   const label = (id: number) => {
     const c = scene.model.calls[id]!;
     const args = Object.values(c.args ?? {})
-      .map((a) => cell(a, scene.model, c.s))
+      .map((a) => arg(a, c.s))
       .join(", ");
-    return `${c.fn}(${args.length > 14 ? `${args.slice(0, 13)}…` : args})`;
+    return `${c.fn}(${args.length > 22 ? `${args.slice(0, 21)}…` : args})`;
   };
+  const longest = Math.max(8, ...nodes.map((n) => label(n.id).length));
+  const BOX = Math.round(longest * 7.4 + 16);
+  const GX = BOX + 14;
+  const GY = 80;
+  const W = Math.max(1, width) * GX + 20;
+  const H = depth * GY + 36;
+  const pos = new Map(nodes.map((n) => [n.id, { x: 10 + n.x * GX + GX / 2, y: 30 + n.depth * GY }]));
   const memoCount = started.filter((n) => n.memo && n.state !== "active" && n.state !== "current").length;
   const toggle = (id: number) =>
     setExpanded((s) => {
@@ -264,7 +276,7 @@ export function RecursionView({ view, scene }: { view: View; scene: Scene }) {
             if (n.parent === null || !pos.has(n.parent) || n.state === "pending") return null;
             const a = pos.get(n.parent)!;
             const b = pos.get(n.id)!;
-            return <line key={`e${n.id}`} className={`edge ${n.state === "active" || n.state === "current" ? "is-path" : ""}`} x1={a.x} y1={a.y + 14} x2={b.x} y2={b.y - 14} />;
+            return <line key={`e${n.id}`} className={`edge ${n.state === "active" || n.state === "current" ? "is-path" : ""}`} x1={a.x} y1={a.y + 34} x2={b.x} y2={b.y - 14} />;
           })}
           {nodes.map((n) => {
             if (n.state === "pending") return null;
@@ -276,7 +288,7 @@ export function RecursionView({ view, scene }: { view: View; scene: Scene }) {
             return (
               <g key={n.id} className={cls} transform={`translate(${p.x} ${p.y})`}>
                 <title>{`${text}${ret ? ` ${ret}` : ""}${n.memo ? ", from the memo" : ""}`}</title>
-                <rect x={-GX / 2 + 4} y="-14" width={GX - 8} height="28" rx="4" />
+                <rect x={-BOX / 2} y="-14" width={BOX} height="28" rx="4" />
                 <text dy="0.35em">{text}</text>
                 {ret && (
                   <text className="ret" y="26">
@@ -293,8 +305,8 @@ export function RecursionView({ view, scene }: { view: View; scene: Scene }) {
                 )}
                 {expanded.has(n.id) && n.hidden === 0 && scene.model.children[n.id]!.length > 0 && (
                   <g className="fold" role="button" tabIndex={0} aria-label={`Fold the calls under ${text}`} onClick={() => toggle(n.id)} onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && toggle(n.id)}>
-                    <rect x={GX / 2 - 22} y="-12" width="18" height="18" rx="9" />
-                    <text x={GX / 2 - 13} y="-3" dy="0.35em">
+                    <rect x={BOX / 2 + 2} y="-9" width="18" height="18" rx="9" />
+                    <text x={BOX / 2 + 11} y="0" dy="0.35em">
                       −
                     </text>
                   </g>

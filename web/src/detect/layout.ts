@@ -209,21 +209,22 @@ export function binaryTrees(model: Model, step: number) {
 /**
  * The order tree nodes were visited: the first time each node's payload was read
  * (`node.val`), which for a recursive in-order walk is in-order, for BFS level order.
+ * Only reads by the function doing the latest reads count: building a search tree also
+ * reads `root.val` (to compare), and that is not the walk being drawn.
  */
 export function visitOrder(model: Model, upTo: number): number[] {
-  const order: number[] = [];
-  const seen = new Set<number>();
+  const reads: { id: number; fn: string }[] = [];
   for (let i = 0; i <= upTo && i < model.length; i++) {
-    for (const [id, attr] of model.steps[i]!.ar ?? []) {
-      if (VALUE_ATTRS.includes(attr) && !seen.has(id)) {
-        const o = model.obj(id, i);
-        if (o?.t === "obj" && ("left" in o.v || "right" in o.v)) {
-          seen.add(id);
-          order.push(id);
-        }
-      }
+    const step = model.steps[i]!;
+    for (const [id, attr] of step.ar ?? []) {
+      if (!VALUE_ATTRS.includes(attr)) continue;
+      const o = model.obj(id, i);
+      if (o?.t === "obj" && ("left" in o.v || "right" in o.v)) reads.push({ id, fn: model.fn(step.c) });
     }
   }
+  const walker = reads.at(-1)?.fn;
+  const order: number[] = [];
+  for (const r of reads) if (r.fn === walker && !order.includes(r.id)) order.push(r.id);
   return order;
 }
 

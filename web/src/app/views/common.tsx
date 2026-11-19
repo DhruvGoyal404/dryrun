@@ -112,7 +112,7 @@ export function ViewFrame({
     <section className={`view view-${view.kind}${stale ? " is-stale" : ""}`} aria-labelledby={id} data-kind={view.kind} data-name={view.name}>
       <header className="view-head">
         <h3 id={id}>
-          <span className="view-name hand">{view.name}</span>
+          <span className="view-name hand">{[view.name, ...(view.aliases ?? [])].join(", ")}</span>
           <span className="view-kind">
             {KIND_LABEL[view.kind]}
             {scope && ` ${scope}`}
