@@ -2,6 +2,30 @@
 
 A short running log: what's done, numbers, what failed, what's next. Newest first.
 
+## 2026-11-19 (evening)
+
+- e2e green on CI: 62 passed, 1 skipped (the keyboard-only test is desktop only), across
+  desktop 1440 px and a 390 px phone: every library example draws its view, caps, errors, stdin, compare + growth chart,
+  share round trip, damaged links, offline reload, keyboard-only use, axe in both themes,
+  no console errors, all under the production CSP.
+- Unit: 49 vitest (detectors, layouts, share, navigation, format), 26 pytest on CPython
+  3.14 and the same 26 inside Pyodide, 31 policy-script tests.
+- Lighthouse on the tested build, served with the production headers (CI, median of 3):
+  landing page 100/100/100/100 on mobile (LCP 1.0 s) and desktop (LCP 0.3 s), TBT 0 ms,
+  CLS 0. The app page could not be measured (Lighthouse NO_NAVSTART while Python boots in
+  a worker); it is report-only.
+- What failed and was fixed: CodeMirror's injected <style> and inlined data: fonts broke
+  the CSP (editor moved into a shadow root, assetsInlineLimit 0); the service worker
+  precached a 404 and two never-written chunks (list now built from written files); dialog
+  state lagged native close (shortcuts read the DOM); visit order counted insert's
+  comparisons; pointers guessed onto the wrong array; offset reads drawn one cell off.
+- Fresh-eyes review (separate reviewer, screenshots + source): 10 material fixes, 8 done.
+  Not done: a small drawing per library entry on the landing page, and struck-through
+  overwritten values ("crossed out and rewritten") in cells.
+- Waiting on the owner: Cloudflare secrets and the custom domain. The deploy job skips
+  until the secrets exist; the live-site job (analytics-script check, live e2e subset,
+  Lighthouse on the live URL) runs after the first deploy.
+
 ## 2026-11-19 (afternoon)
 
 - Repo protections match gridrace: fork-PR approval for all outside contributors, private
